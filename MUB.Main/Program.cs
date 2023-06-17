@@ -1,10 +1,11 @@
+using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 using MUB.Main.Handlers;
 using MUB.Main.Workers;
 
 var socketConfig = new DiscordSocketConfig {
-    // GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildMembers,
+    GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildEmojis,
     AlwaysDownloadUsers = true
 };
 

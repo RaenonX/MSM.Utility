@@ -8,7 +8,7 @@ public class Worker : BackgroundService {
     private readonly IConfiguration _config;
 
     private readonly IServiceProvider _services;
-    
+
     public Worker(IServiceProvider services, IConfiguration config) {
         _services = services;
         _config = config;
@@ -19,7 +19,7 @@ public class Worker : BackgroundService {
 
         client.Log += OnLogHandler.OnLogAsync;
 
-        // Here we can initialize the service that will register and execute our commands
+        // Initializes service and register command
         await _services
             .GetRequiredService<InteractionHandler>()
             .InitializeAsync();

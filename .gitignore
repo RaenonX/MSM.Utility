@@ -4,3 +4,6 @@ obj/
 riderModule.iml
 /_ReSharper.Caches/
 /.idea
+
+# This file should still exist in the project, but shouldn't be updated
+appsettings.json
