@@ -24,11 +24,19 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
             ephemeral: true
         );
 
-    [SlashCommand("class", "Returns MSM class data spreadsheet by songj0306")]
+    [SlashCommand("class", "Returns MSM class data spreadsheet by songj0306.")]
     [UsedImplicitly]
     public async Task SendClassDataLinkAsync() =>
         await RespondAsync(
             text: "https://docs.google.com/spreadsheets/d/1yUwSaHJmXBOvc-eI0UD7EMVyu4WUc2OwjkXPbMa4AWI",
+            ephemeral: true
+        );
+
+    [SlashCommand("v3", "Returns MSM vskill 3 of all jobs.")]
+    [UsedImplicitly]
+    public async Task SendV3SkillLinkAsync() =>
+        await RespondAsync(
+            text: "https://docs.google.com/document/d/199FpdTbXf7WI8eOPaOP6qPBCt3-wcOkHaHTDPHIMIos",
             ephemeral: true
         );
 }
