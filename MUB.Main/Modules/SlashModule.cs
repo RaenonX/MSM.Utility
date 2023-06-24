@@ -39,4 +39,12 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
             text: "https://docs.google.com/document/d/199FpdTbXf7WI8eOPaOP6qPBCt3-wcOkHaHTDPHIMIos",
             ephemeral: true
         );
+
+    [SlashCommand("ign", "Returns IGN of bijasses.")]
+    [UsedImplicitly]
+    public async Task SendBijassesIgnAsync() =>
+        await RespondAsync(
+            text: "#1 Mercedes: Мєrcєdєs",
+            ephemeral: false
+        );
 }
