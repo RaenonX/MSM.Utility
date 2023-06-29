@@ -7,3 +7,5 @@ riderModule.iml
 
 # This file should still exist in the project, but shouldn't be updated
 appsettings.Development.json
+
+.mongo
