@@ -78,7 +78,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
                 await RespondAsync(text: "Hаn");
                 break;
             case BijassMember.Jay:
-                await RespondAsync(text: "Jауратн");
+                await RespondAsync(text: "Вroly");
                 break;
             case BijassMember.KeviNightLord:
                 await RespondAsync(text: "Disavowed");

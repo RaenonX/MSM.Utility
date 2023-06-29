@@ -4,6 +4,7 @@
         <TargetFramework>net7.0</TargetFramework>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
+        <Company>RaenonX</Company>
         <UserSecretsId>dotnet-MSM.Bot-91ED9BDF-600F-4E75-AFD6-85B0B0256008</UserSecretsId>
     </PropertyGroup>
 
