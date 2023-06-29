@@ -54,8 +54,53 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
     [UsedImplicitly]
     public async Task SendBijassesIgnAsync(BijassMember bijass) {
         switch (bijass) {
+            case BijassMember.Andrew:
+                await RespondAsync(text: "Lungy8");
+                break;
+            case BijassMember.Allen:
+                await RespondAsync(text: "Раl");
+                break;
+            case BijassMember.Coolzone:
+                await RespondAsync(text: "Rank1WA");
+                break;
             case BijassMember.Fb:
                 await RespondAsync(text: "Мєrcєdєs");
+                break;
+            case BijassMember.Han:
+                await RespondAsync(text: "Hаn");
+                break;
+            case BijassMember.Jay:
+                await RespondAsync(text: "Jауратн");
+                break;
+            case BijassMember.KeviNightLord:
+                await RespondAsync(text: "Disavowed");
+                break;
+            case BijassMember.KeviPaladin:
+                await RespondAsync(text: "Paliwyn");
+                break;
+            case BijassMember.LilyBishop:
+                await RespondAsync(text: "Rosseria");
+                break;
+            case BijassMember.LilyPathfinder:
+                await RespondAsync(text: "Roselily");
+                break;
+            case BijassMember.LilyPhantom:
+                await RespondAsync(text: "Pixielily");
+                break;
+            case BijassMember.Mikey:
+                await RespondAsync(text: "Stimmer");
+                break;
+            case BijassMember.Phil:
+                await RespondAsync(text: "DeportedFob");
+                break;
+            case BijassMember.Sheepey:
+                await RespondAsync(text: "DeepsNL");
+                break;
+            case BijassMember.TedPhantom:
+                await RespondAsync(text: "tєddy");
+                break;
+            case BijassMember.TedShadower:
+                await RespondAsync(text: "gаrbage");
                 break;
             default:
                 throw new ArgumentOutOfRangeException(nameof(bijass), bijass, $"Invalid bijass member: {bijass}");
