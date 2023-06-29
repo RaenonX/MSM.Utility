@@ -39,17 +39,7 @@ public class InteractionHandler {
     }
 
     private async Task ReadyAsync() {
-        // Context & Slash commands can be automatically registered,
-        // but this process needs to happen after the client enters the READY state.
-        // Since Global Commands take around 1 hour to register,
-        // we should use a test guild to instantly update and test our commands.
-        if (AppState.IsDebug()) {
-            await _handler.RegisterCommandsToGuildAsync(
-                _config.GetSection("Discord").GetValue<ulong>("TestGuildId")
-            );
-        } else {
-            await _handler.RegisterCommandsGloballyAsync();
-        }
+        await _handler.RegisterCommandsGloballyAsync();
     }
 
     private async Task HandleInteraction(SocketInteraction interaction) {
