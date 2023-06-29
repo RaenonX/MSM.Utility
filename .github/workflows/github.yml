@@ -6,6 +6,12 @@ on:
 jobs:
   build:
     runs-on: windows-latest
+    
+    strategy:
+      matrix:
+        artifact:
+          - MSM.Bot
+          - MSM.TS
 
     steps:
       - name: Checkout Repository
@@ -25,10 +31,10 @@ jobs:
           --self-contained
           --output ./build
           -p:PublishSingleFile=true
-          MSM.Bot
+          ${{ matrix.artifact }}
 
-      - name: Upload Artifact
+      - name: Upload Artifact (${{ matrix.artifact }})
         uses: actions/upload-artifact@v3
         with:
-          name: build
-          path: ./build/MSM.Bot.*
+          name: ${{ matrix.artifact }}
+          path: ./build/${{ matrix.artifact }}.*
