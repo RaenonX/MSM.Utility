@@ -41,21 +41,12 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
         [Summary(description: "Price alert threshold. If the current price falls below this, sends an alert.")]
         decimal maxPx
     ) {
-        var result = await PxAlertController.SetAlert(item, maxPx);
+        await PxAlertController.SetAlert(item, maxPx);
 
-        if (result.ModifiedCount > 0) {
-            await RespondAsync(
-                $"Sending price alert every {ConfigHelper.GetAlertIntervalSec()} secs when\n" +
-                $"> The price of **{item}** is < **{maxPx:#,###}**"
-            );
-            return;
-        }
-
-        if (result.MatchedCount > 0) {
-            await RespondAsync($"Price alert of **{item}** if < **{maxPx:#,###}** exists.");
-        }
-
-        await RespondAsync("Price alert not added or modified.");
+        await RespondAsync(
+            $"Sending price alert every {ConfigHelper.GetAlertIntervalSec()} secs when\n" +
+            $"> The price of **{item}** is < **{maxPx:#,###}**"
+        );
     }
     
     [SlashCommand("ts-delete-alert", "Deletes a Trade Station price alert.")]
