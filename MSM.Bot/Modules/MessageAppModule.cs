@@ -6,7 +6,7 @@ using MSM.Bot.Enums;
 
 namespace MSM.Bot.Modules;
 
-public partial class MessageModule : InteractionModuleBase<SocketInteractionContext> {
+public partial class MessageAppModule : InteractionModuleBase<SocketInteractionContext> {
     [GeneratedRegex("<a?:(\\w+):(?:\\w+)>")]
     private static partial Regex SingleEmojiRegex();
 
