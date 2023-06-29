@@ -25,7 +25,10 @@ public class Worker : BackgroundService {
             .InitializeAsync();
 
         // Bot token can be provided from the Configuration object we set up earlier
-        await client.LoginAsync(TokenType.Bot, _config.GetSection("Discord").GetValue<string>("Token"));
+        await client.LoginAsync(
+            TokenType.Bot,
+            _config.GetRequiredSection("Discord").GetValue<string>("Token")
+        );
         await client.StartAsync();
 
         // Never quit the program until manually forced to.
