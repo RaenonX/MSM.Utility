@@ -6,11 +6,11 @@ using MSM.TS.Payloads;
 namespace MSM.TS.Controllers;
 
 [ApiController]
-[Route("/api/px")]
-public class ApiPxController : ControllerBase {
-    private readonly ILogger<ApiPxController> _logger;
+[Route("/api/[controller]")]
+public class PxController : ControllerBase {
+    private readonly ILogger<PxController> _logger;
 
-    public ApiPxController(ILogger<ApiPxController> logger) {
+    public PxController(ILogger<PxController> logger) {
         _logger = logger;
     }
 
@@ -20,7 +20,7 @@ public class ApiPxController : ControllerBase {
             return Unauthorized();
         }
 
-        _logger.LogInformation("Received price record of {Item} at {Px}", payload.Item, payload.Px);
+        _logger.LogInformation("Received Px record of {Item} at {Px}", payload.Item, payload.Px);
 
         await PxTickController.RecordPx(payload.Item, payload.Px);
         return Ok();
