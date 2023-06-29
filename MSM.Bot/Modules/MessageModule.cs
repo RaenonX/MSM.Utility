@@ -2,9 +2,9 @@
 using Discord;
 using Discord.Interactions;
 using JetBrains.Annotations;
-using MUB.Main.Enums;
+using MSM.Bot.Enums;
 
-namespace MUB.Main.Modules;
+namespace MSM.Bot.Modules;
 
 public partial class MessageModule : InteractionModuleBase<SocketInteractionContext> {
     [GeneratedRegex("<a?:(\\w+):(?:\\w+)>")]

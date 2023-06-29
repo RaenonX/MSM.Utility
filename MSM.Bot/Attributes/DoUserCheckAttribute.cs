@@ -2,7 +2,7 @@ using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
 
-namespace MUB.Main.Attributes; 
+namespace MSM.Bot.Attributes; 
 
 internal class DoUserCheck : PreconditionAttribute
 {

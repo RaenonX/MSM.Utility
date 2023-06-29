@@ -1,6 +1,6 @@
-﻿using MUB.Main.Enums;
+﻿using MSM.Bot.Enums;
 
-namespace MUB.Main.Extensions;
+namespace MSM.Bot.Extensions;
 
 public static class StringExtensions {
     private static T? EnumToString<T>(this string value) where T : struct, Enum {

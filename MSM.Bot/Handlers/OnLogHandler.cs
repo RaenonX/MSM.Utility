@@ -1,6 +1,6 @@
 ﻿using Discord;
 
-namespace MUB.Main.Handlers;
+namespace MSM.Bot.Handlers;
 
 public static class OnLogHandler {
     public static Task OnLogAsync(LogMessage message) {

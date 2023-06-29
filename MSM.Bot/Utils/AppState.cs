@@ -1,4 +1,4 @@
-﻿namespace MUB.Main.Utils;
+﻿namespace MSM.Bot.Utils;
 
 public class AppState {
     public static bool IsDebug() {

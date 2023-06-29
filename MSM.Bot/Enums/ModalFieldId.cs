@@ -1,4 +1,4 @@
-namespace MUB.Main.Enums;
+namespace MSM.Bot.Enums;
 
 public enum ModalFieldId {
     EmoteName,

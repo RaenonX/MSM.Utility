@@ -1,6 +1,6 @@
 ﻿using Discord.Interactions;
 
-namespace MUB.Main.Enums; 
+namespace MSM.Bot.Enums; 
 
 public enum BijassMember {
     [ChoiceDisplay("Andrew")]

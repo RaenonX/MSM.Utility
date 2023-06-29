@@ -1,9 +1,9 @@
 using Discord.Interactions;
 using Eval.net;
 using JetBrains.Annotations;
-using MUB.Main.Enums;
+using MSM.Bot.Enums;
 
-namespace MUB.Main.Modules;
+namespace MSM.Bot.Modules;
 
 public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
     [SlashCommand("dpm-calc", "Calculates DPM given boss HP and time left on clear.")]

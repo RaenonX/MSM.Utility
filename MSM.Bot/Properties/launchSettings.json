@@ -1,6 +1,6 @@
 ﻿{
   "profiles": {
-    "MUB.Main": {
+    "MSM.Bot": {
       "commandName": "Project",
       "dotnetRunMessages": true,
       "environmentVariables": {

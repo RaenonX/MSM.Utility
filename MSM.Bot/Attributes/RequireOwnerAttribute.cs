@@ -1,7 +1,7 @@
 using Discord;
 using Discord.Interactions;
 
-namespace MUB.Main.Attributes;
+namespace MSM.Bot.Attributes;
 
 public class RequireOwnerAttribute : PreconditionAttribute {
     public override async Task<PreconditionResult> CheckRequirementsAsync(

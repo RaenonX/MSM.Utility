@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MUB.Main", "MUB.Main\MUB.Main.csproj", "{6DE9E458-FE51-4A27-A5A1-966D64290694}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSM.Bot", "MSM.Bot\MSM.Bot.csproj", "{6DE9E458-FE51-4A27-A5A1-966D64290694}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

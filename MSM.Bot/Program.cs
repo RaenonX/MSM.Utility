@@ -1,8 +1,8 @@
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using MUB.Main.Handlers;
-using MUB.Main.Workers;
+using MSM.Bot.Handlers;
+using MSM.Bot.Workers;
 
 var socketConfig = new DiscordSocketConfig {
     GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildEmojis,

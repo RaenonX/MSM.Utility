@@ -1,8 +1,8 @@
 using Discord;
 using Discord.WebSocket;
-using MUB.Main.Handlers;
+using MSM.Bot.Handlers;
 
-namespace MUB.Main.Workers;
+namespace MSM.Bot.Workers;
 
 public class Worker : BackgroundService {
     private readonly IConfiguration _config;

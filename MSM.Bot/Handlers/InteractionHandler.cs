@@ -2,12 +2,12 @@ using System.Reflection;
 using Discord;
 using Discord.Interactions;
 using Discord.WebSocket;
-using MUB.Main.Enums;
-using MUB.Main.Extensions;
-using MUB.Main.Modules;
-using MUB.Main.Utils;
+using MSM.Bot.Enums;
+using MSM.Bot.Extensions;
+using MSM.Bot.Modules;
+using MSM.Bot.Utils;
 
-namespace MUB.Main.Handlers;
+namespace MSM.Bot.Handlers;
 
 public class InteractionHandler {
     private readonly DiscordSocketClient _client;
