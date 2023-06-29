@@ -13,6 +13,11 @@ public static class MongoConst {
 
     public static readonly IMongoDatabase PxDatabase = Client.GetDatabase("px");
 
+    private static readonly IMongoDatabase AlertDatabase = Client.GetDatabase("alert");
+
+    public static readonly IMongoCollection<PxAlertModel> PxAlertCollection =
+        AlertDatabase.GetCollection<PxAlertModel>("px");
+
     public static IMongoCollection<PxDataModel> GetPxCollection(string itemName) {
         return PxDatabase.GetCollection<PxDataModel>(itemName);
     }

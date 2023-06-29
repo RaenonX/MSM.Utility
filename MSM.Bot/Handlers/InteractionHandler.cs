@@ -138,7 +138,7 @@ public class InteractionHandler {
 
         switch (selectMenuId) {
             case SelectMenuId.TradeStationPxCheck:
-                var latestPxData = await PxController.GetLatestOfItems(values);
+                var latestPxData = await PxDataController.GetLatestOfItems(values);
 
                 await component.RespondAsync(string.Join(
                     "\n\n",
@@ -149,7 +149,7 @@ public class InteractionHandler {
 
                         var secsAgo = (DateTime.UtcNow - x.Value.Timestamp).TotalSeconds;
 
-                        return $"{x.Key}: **{x.Value.Px:#,###.##}**\n" +
+                        return $"{x.Key}: **{x.Value.Px:#,###}**\n" +
                                $"> Last Updated: {x.Value.Timestamp} (UTC) - {secsAgo:0} secs ago";
                     })
                 ));

@@ -67,7 +67,7 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
             .WithPlaceholder("Select 1+ item(s)")
             .WithCustomId(SelectMenuId.TradeStationPxCheck.ToString());
 
-        menuBuilder = (await PxController.GetAvailableItemsAsync())
+        menuBuilder = (await PxDataController.GetAvailableItemsAsync())
             .Aggregate(
                 menuBuilder,
                 (current, item) => current.AddOption(label: item, value: item)
