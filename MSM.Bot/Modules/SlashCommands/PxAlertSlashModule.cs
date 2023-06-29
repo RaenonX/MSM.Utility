@@ -16,7 +16,7 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
             .WithPlaceholder("Select 1+ item(s)")
             .WithCustomId(SelectMenuId.TradeStationPxCheck.ToString());
 
-        menuBuilder = (await PxDataController.GetAvailableItemsAsync())
+        menuBuilder = (await PxTickController.GetAvailableItemsAsync())
             .Aggregate(
                 menuBuilder,
                 (current, item) => current.AddOption(label: item, value: item)

@@ -12,7 +12,7 @@ public class PxAlertItemAutoCompleteHandler : AutocompleteHandler {
         IServiceProvider services
     ) {
         return AutocompletionResult.FromSuccess(
-            (await PxDataController.GetAvailableItemsAsync())
+            (await PxTickController.GetAvailableItemsAsync())
             .Select(x => new AutocompleteResult(x, x))
             // max 25 suggestions at a time (API limit)
             .Take(25)

@@ -4,25 +4,25 @@ using MSM.Common.Models;
 
 namespace MSM.Common.Controllers;
 
-public static class PxDataController {
+public static class PxTickController {
     public static Task RecordPx(string item, decimal px) {
-        return MongoConst.GetPxCollection(item).InsertOneAsync(new PxDataModel {
+        return MongoConst.GetPxTickCollection(item).InsertOneAsync(new PxDataModel {
             Timestamp = DateTime.UtcNow,
             Px = px
         });
     }
 
     public static Task<IEnumerable<string>> GetAvailableItemsAsync() {
-        return MongoConst.PxDatabase.GetCollectionNames();
+        return MongoConst.PxTickDatabase.GetCollectionNames();
     }
 
     private static async Task<KeyValuePair<string, PxDataModel?>> GetLatestOfItem(string item) {
-        var pxData = await MongoConst.GetPxCollection(item)
+        var pxData = await MongoConst.GetPxTickCollection(item)
             .Find(_ => true)
             .SortByDescending(x => x.Timestamp)
             .Limit(1)
             .SingleAsync();
-        
+
         return new KeyValuePair<string, PxDataModel?>(item, pxData);
     }
 

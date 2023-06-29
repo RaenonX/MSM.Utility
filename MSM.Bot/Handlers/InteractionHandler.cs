@@ -138,7 +138,7 @@ public class InteractionHandler {
 
         switch (selectMenuId) {
             case SelectMenuId.TradeStationPxCheck:
-                var latestPxData = await PxDataController.GetLatestOfItems(values);
+                var latestPxData = await PxTickController.GetLatestOfItems(values);
 
                 await component.RespondAsync(string.Join(
                     "\n\n",

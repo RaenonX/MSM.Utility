@@ -22,8 +22,8 @@ public static class MongoIndexManager {
         var indexModel = new CreateIndexModel<PxDataModel>(indexKeys, indexOptions);
 
         await Task.WhenAll(
-            (await MongoConst.PxDatabase.GetCollectionNames())
-            .Select(symbol => MongoConst.GetPxCollection(symbol).Indexes.CreateOneAsync(indexModel))
+            (await MongoConst.PxTickDatabase.GetCollectionNames())
+            .Select(symbol => MongoConst.GetPxTickCollection(symbol).Indexes.CreateOneAsync(indexModel))
         );
     }
 

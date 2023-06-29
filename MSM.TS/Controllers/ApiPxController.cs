@@ -22,7 +22,7 @@ public class ApiPxController : ControllerBase {
 
         _logger.LogInformation("Received price record of {Item} at {Px}", payload.Item, payload.Px);
 
-        await PxDataController.RecordPx(payload.Item, payload.Px);
+        await PxTickController.RecordPx(payload.Item, payload.Px);
         return Ok();
     }
 }

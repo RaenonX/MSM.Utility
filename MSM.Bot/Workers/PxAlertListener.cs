@@ -24,7 +24,7 @@ public class PxAlertListener : BackgroundService {
         var pipeline = new EmptyPipelineDefinition<ChangeStreamDocument<PxDataModel>>()
             .Match(x => x.OperationType == ChangeStreamOperationType.Insert);
 
-        var cursor = MongoConst.GetPxCollection(item).Watch(pipeline, options, cancellationToken);
+        var cursor = MongoConst.GetPxTickCollection(item).Watch(pipeline, options, cancellationToken);
 
         TaskHelper.FireAndForget(
             async () => {
@@ -63,7 +63,7 @@ public class PxAlertListener : BackgroundService {
             throw new ArgumentException($"Px alert channel is not a message channel (#{pxAlertChannelId})");
         }
 
-        foreach (var pxCollectionName in await MongoConst.PxDatabase.GetCollectionNames()) {
+        foreach (var pxCollectionName in await MongoConst.PxTickDatabase.GetCollectionNames()) {
             WatchPxCollection(channel, pxCollectionName, cancellationToken);
         }
     }
