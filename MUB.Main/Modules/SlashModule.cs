@@ -1,12 +1,14 @@
+using Discord;
 using Discord.Interactions;
 using JetBrains.Annotations;
+using MUB.Main.Enums;
 
 namespace MUB.Main.Modules;
 
 public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
-    [SlashCommand("dmg-calc", "Calculates overall DPM given boss HP and time left on clear.")]
+    [SlashCommand("dpm-calc", "Calculates DPM given boss HP and time left on clear.")]
     [UsedImplicitly]
-    public async Task DamageCalcAsync(
+    public async Task DpmCalcAsync(
         [Summary(description: "Boss HP in B")] double bossHp,
         [Summary(description: "Minutes left on clear")] int minsLeft,
         [Summary(description: "Seconds left on clear")] int secsLeft
@@ -16,9 +18,17 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
                   $"> Boss HP: {bossHp:F3} B - {minsLeft}:{secsLeft:D2} left"
         );
 
+    [SlashCommand("dmg-calc", "Calculates damage based on character stats.")]
+    [UsedImplicitly]
+    public async Task DamageCalcAsync() =>
+        await RespondAsync(
+            text: "https://docs.google.com/spreadsheets/d/1-CrbLIBr_aL7qnpyQWCrOzyBALHnrnyF6FaMY49puEY",
+            ephemeral: true
+        );
+
     [SlashCommand("ping", "Pings the bot and returns its latency.")]
     [UsedImplicitly]
-    public async Task GreetUserAsync() =>
+    public async Task PingAsync() =>
         await RespondAsync(
             text: $"Bot Latency: {Context.Client.Latency} ms",
             ephemeral: true
@@ -42,9 +52,13 @@ public class SlashModule : InteractionModuleBase<SocketInteractionContext> {
 
     [SlashCommand("ign", "Returns IGN of bijasses.")]
     [UsedImplicitly]
-    public async Task SendBijassesIgnAsync() =>
-        await RespondAsync(
-            text: "#1 Mercedes: Мєrcєdєs",
-            ephemeral: false
-        );
+    public async Task SendBijassesIgnAsync(BijassMember bijass) {
+        switch (bijass) {
+            case BijassMember.Fb:
+                await RespondAsync(text: "Мєrcєdєs");
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(bijass), bijass, $"Invalid bijass member: {bijass}");
+        }
+    }
 }

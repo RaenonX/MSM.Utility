@@ -4,6 +4,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using MUB.Main.Enums;
 using MUB.Main.Extensions;
+using MUB.Main.Modules;
 using MUB.Main.Utils;
 
 namespace MUB.Main.Handlers;
