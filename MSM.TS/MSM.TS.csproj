@@ -15,8 +15,4 @@
       <ProjectReference Include="..\MSM.Common\MSM.Common.csproj" />
     </ItemGroup>
 
-    <ItemGroup>
-      <Folder Include=".mongo\logs\" />
-    </ItemGroup>
-
 </Project>
