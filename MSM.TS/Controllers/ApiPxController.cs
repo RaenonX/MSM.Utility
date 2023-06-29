@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using MSM.Common.Controllers;
 using MSM.Common.Utils;
 using MSM.TS.Payloads;
@@ -16,9 +15,7 @@ public class ApiPxController : ControllerBase {
     }
 
     [HttpPost]
-    public async Task<StatusCodeResult> RecordPx(
-        [FromBody(EmptyBodyBehavior = EmptyBodyBehavior.Disallow)] PxRecordPayload payload
-    ) {
+    public async Task<StatusCodeResult> RecordPx([FromForm] PxRecordPayload payload) {
         if (payload.Token != ConfigHelper.GetApiToken()) {
             return Unauthorized();
         }
