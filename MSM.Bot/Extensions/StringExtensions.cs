@@ -17,6 +17,10 @@ public static class StringExtensions {
         return EnumToString<ModalId>(modalId);
     }
 
+    public static SelectMenuId? ToSelectMenuId(this string modalId) {
+        return EnumToString<SelectMenuId>(modalId);
+    }
+
     public static ModalFieldId? ToModalFieldId(this string modalFieldId) {
         return EnumToString<ModalFieldId>(modalFieldId);
     }

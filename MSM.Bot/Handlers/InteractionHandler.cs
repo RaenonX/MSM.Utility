@@ -4,8 +4,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using MSM.Bot.Enums;
 using MSM.Bot.Extensions;
-using MSM.Bot.Modules;
-using MSM.Bot.Utils;
+using MSM.Common.Controllers;
 
 namespace MSM.Bot.Handlers;
 
@@ -16,16 +15,13 @@ public class InteractionHandler {
 
     private readonly IServiceProvider _services;
 
-    private readonly IConfiguration _config;
-
     public InteractionHandler(
         DiscordSocketClient client, InteractionService handler,
-        IServiceProvider services, IConfiguration config
+        IServiceProvider services
     ) {
         _client = client;
         _handler = handler;
         _services = services;
-        _config = config;
     }
 
     public async Task InitializeAsync() {
@@ -36,6 +32,7 @@ public class InteractionHandler {
 
         _client.InteractionCreated += HandleInteraction;
         _client.ModalSubmitted += HandleModalSubmitted;
+        _client.SelectMenuExecuted += HandleSelectMenuExecuted;
     }
 
     private async Task ReadyAsync() {
@@ -132,6 +129,35 @@ public class InteractionHandler {
                 return;
             default:
                 throw new ArgumentException($"Unhandled modal ID: {modalId}");
+        }
+    }
+
+    private static async Task HandleSelectMenuExecuted(SocketMessageComponent component) {
+        var selectMenuId = component.Data.CustomId.ToSelectMenuId();
+        var values = component.Data.Values.ToList();
+
+        switch (selectMenuId) {
+            case SelectMenuId.TradeStationPxCheck:
+                var latestPxData = await PxController.GetLatestOfItems(values);
+
+                await component.RespondAsync(string.Join(
+                    "\n\n",
+                    latestPxData.Select(x => {
+                        if (x.Value is null) {
+                            return $"{x.Key} does not have price data.";
+                        }
+
+                        var secsAgo = (DateTime.UtcNow - x.Value.Timestamp).TotalSeconds;
+
+                        return $"{x.Key}: **{x.Value.Px:#,###.##}**\n" +
+                               $"> Last Updated: {x.Value.Timestamp} (UTC) - {secsAgo:0} secs ago";
+                    })
+                ));
+                break;
+            case null:
+                return;
+            default:
+                throw new ArgumentException($"Unhandled select menu ID: {selectMenuId}");
         }
     }
 }
