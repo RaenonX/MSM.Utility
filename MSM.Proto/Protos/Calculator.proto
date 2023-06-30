@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+option csharp_namespace = "MSM.Proto";
+
+package MSM;
+
+import "Types/Date.proto";
+
+service Calculator {
+  rpc CalcBar (CalcBarRequest) returns (CalcBarReply);
+}
+
+message CalcBarRequest {
+  string item = 1;
+  Date start = 2;
+  Date end = 3;
+}
+
+message CalcBarReply {
+  string message = 1;
+}

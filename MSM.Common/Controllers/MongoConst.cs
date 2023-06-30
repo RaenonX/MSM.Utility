@@ -23,4 +23,8 @@ public static class MongoConst {
     public static IMongoCollection<PxDataModel> GetPxTickCollection(string itemName) {
         return PxTickDatabase.GetCollection<PxDataModel>(itemName);
     }
+
+    public static IMongoCollection<PxDataModel> GetPxCalcCollection(string itemName) {
+        return PxCalcDatabase.GetCollection<PxDataModel>(itemName);
+    }
 }

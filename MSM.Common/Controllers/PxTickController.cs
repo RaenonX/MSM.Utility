@@ -33,4 +33,9 @@ public static class PxTickController {
                 x => x.Value
             );
     }
+
+    public static async Task<IEnumerable<PxDataModel>> GetDataBetween(string item, DateTime start, DateTime end) {
+        return (await MongoConst.GetPxTickCollection(item).FindAsync(x => x.Timestamp >= start && x.Timestamp <= end))
+            .ToEnumerable();
+    }
 }
