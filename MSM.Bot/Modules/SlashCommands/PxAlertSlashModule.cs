@@ -12,20 +12,26 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
     [SlashCommand("ts", "Checks the current price of items on TS.")]
     [UsedImplicitly]
     public async Task CheckTradeStationPxAsync() {
+        var availableItems = (await PxTickController.GetAvailableItemsAsync())
+            .Order()
+            .ToList();
+
         var menuBuilder = new SelectMenuBuilder()
-            .WithPlaceholder("Select 1+ item(s)")
+            .WithPlaceholder("Pick item(s) for price check")
+            .WithMaxValues(2)
             .WithCustomId(SelectMenuId.TradeStationPxCheck.ToString());
 
-        menuBuilder = (await PxTickController.GetAvailableItemsAsync())
+        menuBuilder = availableItems
             .Aggregate(
                 menuBuilder,
                 (current, item) => current.AddOption(label: item, value: item)
-            );
+            )
+            .WithMaxValues(availableItems.Count);
 
         var builder = new ComponentBuilder()
             .WithSelectMenu(menuBuilder);
 
-        await ReplyAsync("Pick item(s) to check the current price:", components: builder.Build());
+        await ReplyAsync("Item(s) to price check:", components: builder.Build());
     }
 
     [SlashCommand(
@@ -48,7 +54,7 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
             $"> The price of **{item}** is < **{maxPx:#,###}**"
         );
     }
-    
+
     [SlashCommand("ts-delete-alert", "Deletes a Trade Station price alert.")]
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [UsedImplicitly]
