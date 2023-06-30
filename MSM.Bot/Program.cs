@@ -3,8 +3,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using MSM.Bot.Handlers;
 using MSM.Bot.Workers;
-using MSM.Common.Controllers;
-using MSM.Common.Utils;
+using MSM.Common.Extensions;
 
 var socketConfig = new DiscordSocketConfig {
     GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildEmojis,
@@ -12,9 +11,8 @@ var socketConfig = new DiscordSocketConfig {
 };
 
 var host = Host.CreateDefaultBuilder(args)
-    .ConfigureServices((context, services) => {
-        ConfigHelper.Initialize(context.Configuration);
-        
+    .InitConfig()
+    .ConfigureServices(services => {
         services
             .AddSingleton(socketConfig)
             .AddSingleton<DiscordSocketClient>()
@@ -25,6 +23,4 @@ var host = Host.CreateDefaultBuilder(args)
     })
     .Build();
 
-await MongoManager.Initialize();
-
-await host.RunAsync();
+await host.BootAsync();

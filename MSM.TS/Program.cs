@@ -1,9 +1,7 @@
-using MSM.Common.Controllers;
-using MSM.Common.Utils;
+using MSM.Common.Extensions;
 
-var builder = WebApplication.CreateBuilder(args);
-
-ConfigHelper.Initialize(builder.Configuration);
+var builder = WebApplication.CreateBuilder(args)
+    .InitConfig();
 
 builder.Services.AddControllers();
 
@@ -11,6 +9,4 @@ var app = builder.Build();
 
 app.MapControllers();
 
-await MongoManager.Initialize();
-
-app.Run();
+await app.BootAsync();
