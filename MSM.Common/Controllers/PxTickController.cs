@@ -6,10 +6,19 @@ namespace MSM.Common.Controllers;
 
 public static class PxTickController {
     public static Task RecordPx(string item, decimal px) {
-        return MongoConst.GetPxTickCollection(item).InsertOneAsync(new PxDataModel {
-            Timestamp = DateTime.UtcNow,
-            Px = px
-        });
+        return Task.WhenAll(
+            MongoConst.GetPxTickCollection(item).InsertOneAsync(new PxDataModel {
+                Timestamp = DateTime.UtcNow,
+                Px = px
+            }),
+            MongoConst.PxMetaCollection.FindOneAndUpdateAsync<PxMetaModel>(
+                x => x.Item == item,
+                Builders<PxMetaModel>.Update
+                    .Set(x => x.LastUpdate, DateTime.UtcNow)
+                    .Set(x => x.Px, px),
+                new FindOneAndUpdateOptions<PxMetaModel> { IsUpsert = true }
+            )
+        );
     }
 
     public static Task<IEnumerable<string>> GetAvailableItemsAsync() {
