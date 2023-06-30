@@ -4,7 +4,7 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using MSM.Bot.Enums;
 using MSM.Bot.Extensions;
-using MSM.Common.Controllers;
+using MSM.Bot.Utils;
 
 namespace MSM.Bot.Handlers;
 
@@ -30,16 +30,17 @@ public class InteractionHandler {
 
         await _handler.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
-        _client.InteractionCreated += HandleInteraction;
-        _client.ModalSubmitted += HandleModalSubmitted;
-        _client.SelectMenuExecuted += HandleSelectMenuExecuted;
+        _client.InteractionCreated += OnInteractionCreated;
+        _client.ModalSubmitted += OnModalSubmitted;
+        _client.SelectMenuExecuted += OnSelectMenuExecuted;
+        _client.ButtonExecuted += OnButtonExecuted;
     }
 
     private async Task ReadyAsync() {
         await _handler.RegisterCommandsGloballyAsync();
     }
 
-    private async Task HandleInteraction(SocketInteraction interaction) {
+    private async Task OnInteractionCreated(SocketInteraction interaction) {
         try {
             var context = new SocketInteractionContext(_client, interaction);
 
@@ -87,7 +88,7 @@ public class InteractionHandler {
         }
     }
 
-    private async Task HandleModalSubmitted(SocketModal modal) {
+    private async Task OnModalSubmitted(SocketModal modal) {
         var modalId = modal.Data.CustomId.ToModalId();
         var components = modal.Data.Components.ToList();
 
@@ -132,32 +133,41 @@ public class InteractionHandler {
         }
     }
 
-    private static async Task HandleSelectMenuExecuted(SocketMessageComponent component) {
+    private static async Task OnSelectMenuExecuted(SocketMessageComponent component) {
         var selectMenuId = component.Data.CustomId.ToSelectMenuId();
         var values = component.Data.Values.ToList();
 
         switch (selectMenuId) {
             case SelectMenuId.TradeStationPxCheck:
-                var latestPxData = await PxTickController.GetLatestOfItems(values);
-
-                await component.RespondAsync(string.Join(
-                    "\n\n",
-                    latestPxData.Select(x => {
-                        if (x.Value is null) {
-                            return $"{x.Key} does not have price data.";
-                        }
-
-                        var secsAgo = (DateTime.UtcNow - x.Value.Timestamp).TotalSeconds;
-
-                        return $"{x.Key}: **{x.Value.Px:#,###}**\n" +
-                               $"> Last Updated: {x.Value.Timestamp} (UTC) - {secsAgo:0} secs ago";
-                    })
-                ));
+                await component.RespondAsync(
+                    await DiscordMessageGenerator.MakePxReport(values),
+                    components: values.ToPxRefreshButtons()
+                );
                 break;
             case null:
                 return;
             default:
                 throw new ArgumentException($"Unhandled select menu ID: {selectMenuId}");
+        }
+    }
+
+    private static async Task OnButtonExecuted(SocketMessageComponent component) {
+        var idComponents = component.Data.CustomId.Split("/", 2);
+
+        var action = idComponents[0].ToButtonId();
+        var actionParameter = idComponents.Length >= 2 ? idComponents[1] : string.Empty;
+
+        switch (action) {
+            case ButtonId.RefreshPx:
+                await component.RespondAsync(
+                    await DiscordMessageGenerator.MakePxReport(new[] { actionParameter }),
+                    components: new[] { actionParameter }.ToPxRefreshButtons()
+                );
+                break;
+            case null:
+                return;
+            default:
+                throw new ArgumentException($"Unhandled button ID: {action}");
         }
     }
 }

@@ -9,7 +9,7 @@ using MSM.Common.Utils;
 namespace MSM.Bot.Modules.SlashCommands;
 
 public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext> {
-    [SlashCommand("ts", "Checks the current price of items on TS.")]
+    [SlashCommand("ts", "Calls out the UI for Trade Station price check.")]
     [UsedImplicitly]
     public async Task CheckTradeStationPxAsync() {
         var availableItems = (await PxTickController.GetAvailableItemsAsync())

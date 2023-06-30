@@ -13,15 +13,19 @@ public static class StringExtensions {
         return outSummaryKey;
     }
 
-    public static ModalId? ToModalId(this string modalId) {
-        return EnumToString<ModalId>(modalId);
+    public static ModalId? ToModalId(this string value) {
+        return EnumToString<ModalId>(value);
     }
 
-    public static SelectMenuId? ToSelectMenuId(this string modalId) {
-        return EnumToString<SelectMenuId>(modalId);
+    public static SelectMenuId? ToSelectMenuId(this string value) {
+        return EnumToString<SelectMenuId>(value);
     }
 
-    public static ModalFieldId? ToModalFieldId(this string modalFieldId) {
-        return EnumToString<ModalFieldId>(modalFieldId);
+    public static ButtonId? ToButtonId(this string value) {
+        return EnumToString<ButtonId>(value);
+    }
+
+    public static ModalFieldId? ToModalFieldId(this string value) {
+        return EnumToString<ModalFieldId>(value);
     }
 }
