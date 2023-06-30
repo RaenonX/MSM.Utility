@@ -10,8 +10,11 @@ namespace MSM.Bot.Workers;
 public class PxAlertListener : BackgroundService {
     private readonly DiscordSocketClient _client;
 
-    public PxAlertListener(DiscordSocketClient client) {
+    private readonly ILogger<PxAlertListener> _logger;
+
+    public PxAlertListener(DiscordSocketClient client, ILogger<PxAlertListener> logger) {
         _client = client;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
@@ -30,6 +33,13 @@ public class PxAlertListener : BackgroundService {
 
         await cursor.ForEachAsync(async change => {
             var alert = await PxAlertController.GetAlert(change.FullDocument.Item, change.FullDocument.Px);
+
+            _logger.LogInformation(
+                "Received Px meta change on {Item} for {Px} ({WillAlert})",
+                change.FullDocument.Item,
+                change.FullDocument.Px,
+                alert is null ? "Non-alert" : "Alert"
+            );
 
             // Alert not updated - shouldn't send message notification
             if (alert is null) {
