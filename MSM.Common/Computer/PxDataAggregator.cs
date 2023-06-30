@@ -2,7 +2,7 @@
 using MSM.Common.Extensions;
 using MSM.Common.Models;
 
-namespace MSM.Calc.Computer;
+namespace MSM.Common.Computer;
 
 public static class PxDataAggregator {
     public static async Task<IEnumerable<PxBarModel>> GetBarsAsync(

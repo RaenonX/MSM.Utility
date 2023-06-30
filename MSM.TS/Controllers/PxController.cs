@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using MSM.Calc.Computer;
+using MSM.Common.Computer;
 using MSM.Common.Controllers;
 using MSM.Common.Utils;
 using MSM.TS.Payloads;
