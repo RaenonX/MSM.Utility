@@ -24,7 +24,10 @@ public record PxBarModel {
     public required decimal Close { get; init; }
 
     [UsedImplicitly]
-    public required decimal Tick { get; init; }
+    public required decimal UpTick { get; init; }
+
+    [UsedImplicitly]
+    public required decimal DownTick { get; init; }
 
     public static PxBarModel FromIGrouping(IGrouping<long, PxDataModel> grouping) {
         return new PxBarModel {
@@ -36,9 +39,13 @@ public record PxBarModel {
             // Zip 2 enumerable with offset of 1 (making it comparing "current" and "previous"),
             // and see if there is any difference in price between 2.
             // If so, consider it as a price tick.
-            Tick = grouping.OrderBy(data => data.Timestamp)
+            UpTick = grouping.OrderBy(data => data.Timestamp)
                 .Zip(grouping.OrderBy(data => data.Timestamp).Skip(1))
-                .Select(x => x.Second.Px != x.First.Px ? 1 : 0)
+                .Select(x => x.Second.Px - x.First.Px > 0 ? 1 : 0)
+                .Sum(),
+            DownTick = grouping.OrderBy(data => data.Timestamp)
+                .Zip(grouping.OrderBy(data => data.Timestamp).Skip(1))
+                .Select(x => x.Second.Px - x.First.Px < 0 ? 1 : 0)
                 .Sum()
         };
     }
