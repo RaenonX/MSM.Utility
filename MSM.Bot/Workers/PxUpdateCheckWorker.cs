@@ -23,7 +23,7 @@ public class PxUpdateCheckWorker : BackgroundService {
             if (lastValidTickUpdate is null) {
                 _logger.LogWarning("Last valid tick check failed (No valid tick)");
                 await channel.SendMessageAsync("No last valid tick update found!");
-            } else if (DateTime.UtcNow - lastValidTickUpdate > TimeSpan.FromMinutes(2)) {
+            } else if (DateTime.UtcNow - lastValidTickUpdate > TimeSpan.FromSeconds(45)) {
                 var secsAgo = (DateTime.UtcNow - lastValidTickUpdate.Value).TotalSeconds;
 
                 _logger.LogWarning(
@@ -40,7 +40,7 @@ public class PxUpdateCheckWorker : BackgroundService {
                     lastValidTickUpdate
                 );
             }
-            await Task.Delay(5000, cancellationToken);
+            await Task.Delay(30000, cancellationToken);
         }
     }
 }
