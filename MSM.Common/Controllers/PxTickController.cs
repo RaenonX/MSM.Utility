@@ -12,6 +12,8 @@ public static class PxTickController {
 
     private static readonly ILogger Logger = LogHelper.CreateLogger(typeof(PxTickController));
 
+    private static readonly FilterDefinitionBuilder<PxDataModel> FilterBuilder = Builders<PxDataModel>.Filter;
+
     private const decimal PxVerificationThresholdPct = 5;
 
     private const int PxVerificationRequiredCount = 3;
@@ -88,14 +90,14 @@ public static class PxTickController {
                 DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromMinutes(PxVerificationTimeoutMin)
             ) {
                 verificationQueue.TryDequeue(out var dequeued);
-                
+
                 Logger.LogInformation(
                     "Removed timed out entry of {Item} from queue ({PoppedTimestamp} @ {Px})",
                     item,
                     dequeued?.Timestamp,
                     dequeued?.Px
                 );
-                
+
                 verificationQueue.TryPeek(out queueTop);
             }
 
@@ -139,8 +141,19 @@ public static class PxTickController {
             );
     }
 
-    public static async Task<IEnumerable<PxDataModel>> GetDataBetween(string item, DateTime start, DateTime end) {
-        return (await MongoConst.GetPxTickCollection(item).FindAsync(x => x.Timestamp >= start && x.Timestamp <= end))
+    public static async Task<IEnumerable<PxDataModel>> GetDataBetween(string item, DateTime? start, DateTime? end) {
+        var filters = new List<FilterDefinition<PxDataModel>>();
+
+        if (start is not null) {
+            filters.Add(FilterBuilder.Where(x => x.Timestamp >= start));
+        }
+        if (end is not null) {
+            filters.Add(FilterBuilder.Where(x => x.Timestamp <= end));
+        }
+
+        var findFilter = filters.Count == 0 ? FilterBuilder.Empty : FilterBuilder.And(filters);
+
+        return (await MongoConst.GetPxTickCollection(item).FindAsync(findFilter))
             .ToEnumerable()
             .OrderBy(x => x.Timestamp);
     }

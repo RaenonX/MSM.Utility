@@ -6,7 +6,7 @@ namespace MSM.Common.Computer;
 
 public static class PxDataAggregator {
     public static async Task<IEnumerable<PxBarModel>> GetBarsAsync(
-        string item, DateTime start, DateTime end, int intervalMin
+        string item, DateTime? start, DateTime? end, int intervalMin
     ) {
         var intervalSec = intervalMin * 60;
         

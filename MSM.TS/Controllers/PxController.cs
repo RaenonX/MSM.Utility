@@ -30,13 +30,13 @@ public class PxController : ControllerBase {
     [HttpGet]
     public async Task<JsonResult> GetCalculatedBars(
         [FromQuery] string item,
-        [FromQuery] DateTime start,
+        [FromQuery] DateTime? start,
         [FromQuery] DateTime? end,
         [FromQuery] int intervalMin
     ) {
         return new JsonResult(new PxBarResponse {
             Item = item,
-            Bars = await PxDataAggregator.GetBarsAsync(item, start, end ?? DateTime.UtcNow, intervalMin)
+            Bars = await PxDataAggregator.GetBarsAsync(item, start, end, intervalMin)
         });
     }
 }
