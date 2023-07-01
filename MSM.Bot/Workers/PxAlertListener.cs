@@ -25,7 +25,10 @@ public class PxAlertListener : BackgroundService {
 
         var options = new ChangeStreamOptions { FullDocument = ChangeStreamFullDocumentOption.UpdateLookup };
         var pipeline = new EmptyPipelineDefinition<ChangeStreamDocument<PxMetaModel>>()
-            .Match(x => x.OperationType == ChangeStreamOperationType.Insert);
+            .Match(x =>
+                x.OperationType == ChangeStreamOperationType.Update ||
+                x.OperationType == ChangeStreamOperationType.Modify
+            );
 
         using var cursor = await MongoConst
             .PxMetaCollection
