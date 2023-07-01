@@ -49,6 +49,7 @@ public class PxController : ControllerBase {
         );
 
         return new JsonResult(new PxBarResponse {
+            Timestamp = DateTime.UtcNow,
             Item = item,
             Bars = await PxDataAggregator.GetBarsAsync(item, start, end, intervalMin)
         });
