@@ -16,7 +16,7 @@ public static class PxTickController {
 
     private const int PxVerificationRequiredCount = 3;
 
-    private const int PxVerificationTimeoutMin = 5;
+    private const int PxVerificationTimeoutMin = 3;
 
     private static Task RecordPx(
         IMongoCollection<PxDataModel> collection,
