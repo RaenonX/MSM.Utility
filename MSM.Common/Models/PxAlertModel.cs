@@ -12,6 +12,9 @@ public record PxAlertModel {
     [UsedImplicitly]
     public required decimal MaxPx { get; init; }
     
+    [UsedImplicitly]
+    public required decimal? AlertedAt { get; init; }
+    
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     [UsedImplicitly]
     public required DateTime NextAlert { get; init; }

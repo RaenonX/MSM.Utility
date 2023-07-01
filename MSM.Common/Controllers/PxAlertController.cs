@@ -17,10 +17,12 @@ public static class PxAlertController {
                     // - Current item price needs to be lower than the alert threshold
                     x => item == x.Item && utcNow >= x.NextAlert && itemPx <= x.MaxPx,
                     // Update `NextAlert` timestamp to the next datetime that allows to send another alert
-                    Builders<PxAlertModel>.Update.Set(
-                        x => x.NextAlert,
-                        utcNow + TimeSpan.FromSeconds(ConfigHelper.GetAlertIntervalSec())
-                    ),
+                    Builders<PxAlertModel>.Update
+                        .Set(
+                            x => x.NextAlert,
+                            utcNow + TimeSpan.FromSeconds(ConfigHelper.GetAlertIntervalSec())
+                        )
+                        .Set(x => x.AlertedAt, itemPx),
                     // Return the alert after update
                     new FindOneAndUpdateOptions<PxAlertModel> {
                         ReturnDocument = ReturnDocument.After
@@ -40,7 +42,8 @@ public static class PxAlertController {
             x => x.Item == item,
             Builders<PxAlertModel>.Update
                 .Set(x => x.NextAlert, DateTime.UtcNow)
-                .Set(x => x.MaxPx, maxPx),
+                .Set(x => x.MaxPx, maxPx)
+                .Set(x => x.AlertedAt, null),
             new UpdateOptions { IsUpsert = true }
         );
     }

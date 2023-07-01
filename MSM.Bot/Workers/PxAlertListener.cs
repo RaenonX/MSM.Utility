@@ -1,10 +1,8 @@
-﻿using Discord;
-using Discord.WebSocket;
+﻿using Discord.WebSocket;
 using MongoDB.Driver;
 using MSM.Bot.Extensions;
 using MSM.Common.Controllers;
 using MSM.Common.Models;
-using MSM.Common.Utils;
 
 namespace MSM.Bot.Workers;
 
@@ -41,8 +39,9 @@ public class PxAlertListener : BackgroundService {
                 alert is null ? "Non-alert" : "Alert"
             );
 
-            // Alert not updated - shouldn't send message notification
-            if (alert is null) {
+            // If alert not found, interval not passed, or already alerted at the same price,
+            // don't send message notification
+            if (alert is null || alert.AlertedAt == change.FullDocument.Px) {
                 return;
             }
 

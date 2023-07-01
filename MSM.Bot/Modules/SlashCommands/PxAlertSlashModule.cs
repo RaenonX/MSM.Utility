@@ -55,10 +55,7 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
     ) {
         await PxAlertController.SetAlert(item, maxPx);
 
-        await RespondAsync(
-            $"Sending price alert every {ConfigHelper.GetAlertIntervalSec()} secs when\n" +
-            $"> The price of **{item}** is < **{maxPx:#,###}**"
-        );
+        await RespondAsync($"Price alert of **{item}** @ **{maxPx:#,###}** set!");
     }
 
     [SlashCommand("px-delete-alert", "Deletes a Trade Station price alert.")]
