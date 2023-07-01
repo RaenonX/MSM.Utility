@@ -1,12 +1,21 @@
-﻿namespace MSM.Common.Utils;
+﻿using Microsoft.Extensions.Logging.Console;
 
-public class LogHelper {
-    internal static ILoggerFactory LoggerFactory { private get; set; } = new LoggerFactory();
+namespace MSM.Common.Utils;
 
-    internal static ILogger CreateLogger<T>() => LoggerFactory.CreateLogger<T>();
+public static class LogHelper {
+    public static readonly Action<SimpleConsoleFormatterOptions> LoggingConfigureAction = options => {
+        options.SingleLine = true;
+        options.TimestampFormat = "yyyy-MM-dd HH:mm:ss ";
+    };
 
-    internal static ILogger CreateLogger(Type @class) =>
-        LoggerFactory.CreateLogger(@class.FullName ?? @class.Assembly.Location);
+    internal static ILoggerFactory Factory { private get; set; } = LoggerFactory.Create(
+        builder => builder.AddSimpleConsole(LoggingConfigureAction)
+    );
 
-    internal static ILogger CreateLogger(string categoryName) => LoggerFactory.CreateLogger(categoryName);
+    public static ILogger CreateLogger<T>() => Factory.CreateLogger<T>();
+
+    public static ILogger CreateLogger(Type @class) =>
+        Factory.CreateLogger(@class.FullName ?? @class.Assembly.Location);
+
+    public static ILogger CreateLogger(string categoryName) => Factory.CreateLogger(categoryName);
 }

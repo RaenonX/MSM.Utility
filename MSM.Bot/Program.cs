@@ -11,7 +11,7 @@ var socketConfig = new DiscordSocketConfig {
 };
 
 var host = Host.CreateDefaultBuilder(args)
-    .InitConfig()
+    .BuildCommon()
     .ConfigureServices(services => {
         services
             .AddSingleton(socketConfig)

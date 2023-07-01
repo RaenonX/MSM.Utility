@@ -1,8 +1,11 @@
 ﻿using MongoDB.Driver;
+using MSM.Common.Utils;
 
 namespace MSM.Common.Controllers;
 
 public static class MongoManager {
+    private static readonly ILogger Logger = LogHelper.CreateLogger(typeof(MongoManager));
+
     public static async Task Initialize() {
         MongoConst.Client.Ping();
 
@@ -11,10 +14,10 @@ public static class MongoManager {
 
     private static void Ping(this IMongoClient client) {
         try {
-            Console.WriteLine($"Testing connection to MongoDB at {MongoConst.Url}");
+            Logger.LogInformation("Testing connection to MongoDB at {MongoUrl}", MongoConst.Url);
             client.ListDatabaseNames().MoveNext();
-        } catch (TimeoutException) {
-            Console.WriteLine($"Error connecting to MongoDB at {MongoConst.Url}");
+        } catch (TimeoutException e) {
+            Logger.LogError(e, "Error connecting to MongoDB at {MongoUrl}", MongoConst.Url);
             Environment.Exit(1);
             throw;
         }

@@ -3,8 +3,7 @@ using MSM.Calc.Services;
 using MSM.Common.Extensions;
 
 
-var builder = WebApplication.CreateBuilder(args)
-    .InitConfig();
+var builder = WebApplication.CreateBuilder(args).BuildCommon();
 
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddGrpc();
