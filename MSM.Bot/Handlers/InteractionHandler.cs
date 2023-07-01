@@ -141,7 +141,8 @@ public class InteractionHandler {
             case SelectMenuId.TradeStationPxCheck:
                 await component.RespondAsync(
                     await DiscordMessageGenerator.MakePxReport(values),
-                    components: values.ToPxRefreshButtons()
+                    components: values.ToPxRefreshButtons(),
+                    ephemeral: true
                 );
                 break;
             case null:
@@ -161,7 +162,8 @@ public class InteractionHandler {
             case ButtonId.RefreshPx:
                 await component.RespondAsync(
                     await DiscordMessageGenerator.MakePxReport(new[] { actionParameter }),
-                    components: new[] { actionParameter }.ToPxRefreshButtons()
+                    components: new[] { actionParameter }.ToPxRefreshButtons(),
+                    ephemeral: true
                 );
                 break;
             case null:

@@ -29,7 +29,7 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
         var builder = new ComponentBuilder()
             .WithSelectMenu(menuBuilder);
 
-        await ReplyAsync("Item(s) to price check:", components: builder.Build());
+        await RespondAsync("Item(s) to price check:", components: builder.Build(), ephemeral: true);
     }
 
     [SlashCommand("price", "Calls out the UI for Trade Station price check.")]
