@@ -21,6 +21,7 @@ var host = Host.CreateDefaultBuilder(args)
             .AddHostedService<DiscordClientWorker>()
             .AddHostedService<PxAlertListener>();
     })
-    .Build();
+    .Build()
+    .InitLogging();
 
 await host.BootAsync();

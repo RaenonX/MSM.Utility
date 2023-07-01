@@ -9,7 +9,9 @@ var builder = WebApplication.CreateBuilder(args)
 builder.Services.AddHostedService<Worker>();
 builder.Services.AddGrpc();
 
-var app = builder.Build();
+var app = builder
+    .Build()
+    .InitLogging();
 
 app.MapGrpcService<CalculatorService>();
 

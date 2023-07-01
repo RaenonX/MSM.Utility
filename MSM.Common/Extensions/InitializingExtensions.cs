@@ -22,4 +22,10 @@ public static class InitializingExtensions {
         await MongoManager.Initialize();
         await host.RunAsync();
     }
+
+    public static T InitLogging<T>(this T host) where T : IHost {
+        LogHelper.LoggerFactory = host.Services.GetRequiredService<ILoggerFactory>();
+        
+        return host;
+    }
 }
