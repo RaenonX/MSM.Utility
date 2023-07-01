@@ -9,9 +9,7 @@ using MSM.Common.Utils;
 namespace MSM.Bot.Modules.SlashCommands;
 
 public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext> {
-    [SlashCommand("ts", "Calls out the UI for Trade Station price check.")]
-    [UsedImplicitly]
-    public async Task CheckTradeStationPxAsync() {
+    private async Task ShowTradeStationPxCheckAsync() {
         var availableItems = (await PxTickController.GetAvailableItemsAsync())
             .Order()
             .ToList();
@@ -34,8 +32,16 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
         await ReplyAsync("Item(s) to price check:", components: builder.Build());
     }
 
+    [SlashCommand("price", "Calls out the UI for Trade Station price check.")]
+    [UsedImplicitly]
+    public Task CheckTradeStationPriceAsync() => ShowTradeStationPxCheckAsync();
+
+    [SlashCommand("px", "Calls out the UI for Trade Station price check.")]
+    [UsedImplicitly]
+    public Task CheckTradeStationPxAsync() => ShowTradeStationPxCheckAsync();
+
     [SlashCommand(
-        "ts-set-alert",
+        "px-set-alert",
         "Sets a price alert for item on Trade Station. Updates the alert on the item if already exists."
     )]
     [DefaultMemberPermissions(GuildPermission.Administrator)]
@@ -55,7 +61,7 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
         );
     }
 
-    [SlashCommand("ts-delete-alert", "Deletes a Trade Station price alert.")]
+    [SlashCommand("px-delete-alert", "Deletes a Trade Station price alert.")]
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [UsedImplicitly]
     public async Task DeleteTradeStationPxAlertAsync(
