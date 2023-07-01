@@ -87,7 +87,15 @@ public static class PxTickController {
                 queueTop is not null &&
                 DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromMinutes(PxVerificationTimeoutMin)
             ) {
-                verificationQueue.TryDequeue(out _);
+                verificationQueue.TryDequeue(out var dequeued);
+                
+                Logger.LogInformation(
+                    "Removed timed out entry of {Item} from queue ({PoppedTimestamp} @ {Px})",
+                    item,
+                    dequeued?.Timestamp,
+                    dequeued?.Px
+                );
+                
                 verificationQueue.TryPeek(out queueTop);
             }
 
