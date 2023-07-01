@@ -1,5 +1,4 @@
 ﻿using MongoDB.Driver;
-using MSM.Common.Extensions;
 using MSM.Common.Models;
 
 namespace MSM.Common.Controllers;
@@ -23,7 +22,7 @@ public static class MongoIndexManager {
         var indexModel = new CreateIndexModel<PxDataModel>(indexKeys, indexOptions);
 
         await Task.WhenAll(
-            (await MongoConst.PxTickDatabase.GetCollectionNames())
+            (await PxTickController.GetAvailableItemsAsync())
             .Select(symbol => MongoConst.GetPxTickCollection(symbol).Indexes.CreateOneAsync(indexModel))
         );
     }
