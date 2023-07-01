@@ -19,13 +19,19 @@ public static class DiscordExtensions {
         return builder.Build();
     }
 
-    public static async Task<IMessageChannel> GetPxAlertChannel(this IDiscordClient client) {
-        var pxAlertChannelId = ConfigHelper.GetDiscordPxAlertChannelId();
-        
-        if (await client.GetChannelAsync(pxAlertChannelId) is not IMessageChannel channel) {
-            throw new ArgumentException($"Px alert channel is not a message channel (#{pxAlertChannelId})");
+    private static async Task<IMessageChannel> GetMessageChannel(this IDiscordClient client, ulong channelId) {
+        if (await client.GetChannelAsync(channelId) is not IMessageChannel channel) {
+            throw new ArgumentException($"Not a message channel (#{channelId})");
         }
 
         return channel;
+    }
+
+    public static Task<IMessageChannel> GetPxAlertChannel(this IDiscordClient client) {
+        return client.GetMessageChannel(ConfigHelper.GetDiscordPxAlertChannelId());
+    }
+
+    public static Task<IMessageChannel> GetSystemAlertChannel(this IDiscordClient client) {
+        return client.GetMessageChannel(ConfigHelper.GetDiscordSystemAlertChannelId());
     }
 }

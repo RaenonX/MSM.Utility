@@ -27,8 +27,16 @@ public static class ConfigHelper {
         return GetDiscordSection().GetRequiredValue<string>("Token");
     }
 
+    public static IConfigurationSection GetDiscordChannelSection() {
+        return GetDiscordSection().GetRequiredSection("Channels");
+    }
+
     public static ulong GetDiscordPxAlertChannelId() {
-        return GetDiscordSection().GetRequiredSection("Channels").GetRequiredValue<ulong>("PxAlert");
+        return GetDiscordChannelSection().GetRequiredValue<ulong>("PxAlert");
+    }
+
+    public static ulong GetDiscordSystemAlertChannelId() {
+        return GetDiscordChannelSection().GetRequiredValue<ulong>("SystemAlert");
     }
 
     public static string GetApiToken() {
