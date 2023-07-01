@@ -4,6 +4,7 @@ using MSM.Common.Controllers;
 using MSM.Common.Enums;
 using MSM.Common.Utils;
 using MSM.TS.Payloads;
+using MSM.TS.Responses;
 
 namespace MSM.TS.Controllers;
 
@@ -27,31 +28,15 @@ public class PxController : ControllerBase {
     }
 
     [HttpGet]
-    public async Task<FileResult> GetCalculatedBars(
+    public async Task<JsonResult> GetCalculatedBars(
         [FromQuery] string item,
         [FromQuery] DateTime start,
         [FromQuery] DateTime? end,
         [FromQuery] int intervalMin
     ) {
-        using var stream = new MemoryStream();
-        await using TextWriter writer = new StreamWriter(stream);
-
-        await writer.WriteLineAsync("Time,Open,High,Low,Close,UpTick,DownTick");
-        var bars = PxDataAggregator.GetBarsAsync(item, start, end ?? DateTime.UtcNow, intervalMin);
-
-        foreach (var row in await bars) {
-            await writer.WriteLineAsync(
-                $"{row.Timestamp},{row.Open},{row.High},{row.Low},{row.Close},{row.UpTick},{row.DownTick}"
-            );
-        }
-
-        await writer.FlushAsync();
-        stream.Position = 0;
-
-        return File(
-            stream.ToArray(),
-            "text/csv",
-            $"{item}-{start:yyyyMMdd}-{end:yyyyMMdd}@{intervalMin}.csv"
-        );
+        return new JsonResult(new PxBarResponse {
+            Item = item,
+            Bars = await PxDataAggregator.GetBarsAsync(item, start, end ?? DateTime.UtcNow, intervalMin)
+        });
     }
 }

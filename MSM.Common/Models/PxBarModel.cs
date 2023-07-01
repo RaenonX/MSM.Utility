@@ -1,16 +1,11 @@
 ﻿using JetBrains.Annotations;
-using MongoDB.Bson.Serialization.Attributes;
-using MSM.Common.Extensions;
 
 namespace MSM.Common.Models;
 
-// To ignore `_id`
-[BsonIgnoreExtraElements]
 public record PxBarModel {
-    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     [UsedImplicitly]
-    public required DateTime Timestamp { get; init; }
-    
+    public required long EpochSecond { get; init; }
+
     [UsedImplicitly]
     public required decimal Open { get; init; }
 
@@ -31,7 +26,7 @@ public record PxBarModel {
 
     public static PxBarModel FromIGrouping(IGrouping<long, PxDataModel> grouping) {
         return new PxBarModel {
-            Timestamp = grouping.Key.ToDateTime(),
+            EpochSecond = grouping.Key,
             Open = grouping.OrderBy(data => data.Timestamp).First().Px,
             High = grouping.Max(data => data.Px),
             Low = grouping.Min(data => data.Px),
