@@ -47,8 +47,8 @@ public class PxAlertListener : BackgroundService {
             }
 
             await channel.SendMessageAsync(
-                $"Price of **{change.FullDocument.Item}** dropped below **{alert.MaxPx:#,###}**!\n" +
-                $"> Current Px: **{change.FullDocument.Px:#,###}**\n" +
+                $"Price of **{change.FullDocument.Item}** at **{change.FullDocument.Px:#,###}** now!\n" +
+                $"> Alert Threshold: **{alert.MaxPx:#,###}**\n" +
                 $"> Last Updated: {change.FullDocument.LastUpdate} (UTC)"
             );
         }, cancellationToken);
