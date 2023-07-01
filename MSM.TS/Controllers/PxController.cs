@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MSM.Common.Computer;
 using MSM.Common.Controllers;
+using MSM.Common.Enums;
 using MSM.Common.Utils;
 using MSM.TS.Payloads;
 
@@ -9,22 +10,20 @@ namespace MSM.TS.Controllers;
 [ApiController]
 [Route("/api/[controller]")]
 public class PxController : ControllerBase {
-    private readonly ILogger<PxController> _logger;
-
-    public PxController(ILogger<PxController> logger) {
-        _logger = logger;
-    }
-
     [HttpPost]
-    public async Task<StatusCodeResult> RecordPx([FromForm] PxRecordPayload payload) {
+    public async Task<ActionResult> RecordPx([FromForm] PxRecordPayload payload) {
         if (payload.Token != ConfigHelper.GetApiToken()) {
             return Unauthorized();
         }
 
-        _logger.LogInformation("Received Px record of {Item} at {Px}", payload.Item, payload.Px);
+        var result = await PxTickController.RecordPx(payload.Item, payload.Px);
 
-        await PxTickController.RecordPx(payload.Item, payload.Px);
-        return Ok();
+        return result switch {
+            PxRecordResult.Recorded => Ok(),
+            PxRecordResult.RecordedWithQueueAborted => Ok(),
+            PxRecordResult.VerificationPending => Ok(payload.Item),
+            _ => BadRequest($"Unhandled record result: {result}")
+        };
     }
 
     [HttpGet]
@@ -39,7 +38,7 @@ public class PxController : ControllerBase {
 
         await writer.WriteLineAsync("Time,Open,High,Low,Close,UpTick,DownTick");
         var bars = PxDataAggregator.GetBarsAsync(item, start, end ?? DateTime.UtcNow, intervalMin);
-        
+
         foreach (var row in await bars) {
             await writer.WriteLineAsync(
                 $"{row.Timestamp},{row.Open},{row.High},{row.Low},{row.Close},{row.UpTick},{row.DownTick}"
