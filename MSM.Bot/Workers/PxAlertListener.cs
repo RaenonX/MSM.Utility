@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using MongoDB.Driver;
+using MSM.Bot.Extensions;
 using MSM.Common.Controllers;
 using MSM.Common.Models;
 using MSM.Common.Utils;
@@ -18,11 +19,7 @@ public class PxAlertListener : BackgroundService {
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
-        var pxAlertChannelId = ConfigHelper.GetDiscordPxAlertChannelId();
-        if (await _client.GetChannelAsync(pxAlertChannelId) is not IMessageChannel channel) {
-            throw new ArgumentException($"Px alert channel is not a message channel (#{pxAlertChannelId})");
-        }
-
+        var channel = await _client.GetPxAlertChannel();
         var options = new ChangeStreamOptions { FullDocument = ChangeStreamFullDocumentOption.UpdateLookup };
         var pipeline = new EmptyPipelineDefinition<ChangeStreamDocument<PxMetaModel>>()
             .Match(x =>

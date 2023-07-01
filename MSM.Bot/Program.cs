@@ -19,7 +19,8 @@ var host = Host.CreateDefaultBuilder(args)
             .AddSingleton(x => new InteractionService(x.GetRequiredService<DiscordSocketClient>()))
             .AddSingleton<InteractionHandler>()
             .AddHostedService<DiscordClientWorker>()
-            .AddHostedService<PxAlertListener>();
+            .AddHostedService<PxAlertListener>()
+            .AddHostedService<PxUpdateCheckWorker>();
     })
     .Build()
     .InitLogging();
