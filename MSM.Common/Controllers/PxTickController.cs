@@ -16,6 +16,8 @@ public static class PxTickController {
 
     private const int PxVerificationRequiredCount = 3;
 
+    private const int PxVerificationTimeoutMin = 5;
+
     private static Task RecordPx(
         IMongoCollection<PxDataModel> collection,
         ConcurrentQueue<PxDataModel> queue,
@@ -79,7 +81,19 @@ public static class PxTickController {
                 return PxRecordResult.RecordedWithQueueAborted;
             }
 
+            // Remove timed-out entries in the verification queue
+            verificationQueue.TryPeek(out var queueTop);
+            while (
+                queueTop is not null &&
+                DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromMinutes(PxVerificationTimeoutMin)
+            ) {
+                verificationQueue.TryDequeue(out _);
+                verificationQueue.TryPeek(out queueTop);
+            }
+
+            // Insert incoming data into verification queue
             verificationQueue.Enqueue(incoming);
+
             Logger.LogInformation(
                 "Received {Item} at {Px} ({CountToVerify} in verification queue)",
                 item,
