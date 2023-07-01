@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using MSM.Common.Extensions;
 
 namespace MSM.Common.Utils;
 
@@ -16,25 +16,22 @@ public static class ConfigHelper {
     }
     
     public static string GetMongoDbUrl() {
-        return Config.GetRequiredSection("Mongo").GetValue<string>("Url") ??
-               throw new InvalidOperationException("`Mongo.Url` is required in appsettings.json");
+        return Config.GetRequiredSection("Mongo").GetRequiredValue<string>("Url");
     }
 
     public static string GetDiscordToken() {
-        return GetDiscordSection().GetValue<string>("Token") ??
-               throw new InvalidOperationException("`Discord.Token` is required in appsettings.json");
+        return GetDiscordSection().GetRequiredValue<string>("Token");
     }
 
     public static ulong GetDiscordPxAlertChannelId() {
-        return GetDiscordSection().GetRequiredSection("Channels").GetValue<ulong>("PxAlert");
+        return GetDiscordSection().GetRequiredSection("Channels").GetRequiredValue<ulong>("PxAlert");
     }
 
     public static string GetApiToken() {
-        return Config.GetRequiredSection("Api").GetValue<string>("Token") ??
-               throw new InvalidOperationException("`Api.Token` is required in appsettings.json");
+        return Config.GetRequiredSection("Api").GetRequiredValue<string>("Token");
     }
 
     public static int GetAlertIntervalSec() {
-        return Config.GetRequiredSection("Alert").GetValue<int>("Interval");
+        return Config.GetRequiredSection("Alert").GetRequiredValue<int>("Interval");
     }
 }
