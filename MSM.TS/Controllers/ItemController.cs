@@ -14,11 +14,20 @@ public class ItemController : ControllerBase {
     }
 
     [HttpGet]
+    [Route("available")]
     public async Task<JsonResult> GetAvailableItems() {
         _logger.LogInformation("Getting available items");
 
         return new JsonResult(new AvailableItemsResponse {
             Items = (await PxTickController.GetAvailableItemsAsync()).Order()
         });
+    }
+
+    [HttpGet]
+    [Route("tracking")]
+    public async Task<ActionResult> GetTrackingItems() {
+        _logger.LogInformation("Getting tracking items");
+        
+        return Content(string.Join(',', (await PxTrackingItemController.GetTrackingItemsAsync()).Order()));
     }
 }

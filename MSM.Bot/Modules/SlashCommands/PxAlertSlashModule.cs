@@ -78,4 +78,46 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
 
         await RespondAsync($"Price alert of **{item}** not found.");
     }
+
+    [SlashCommand("px-start-tracking", "Start tracking an item.")]
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [UsedImplicitly]
+    public async Task StartTrackingItemAsync([Summary(description: "Item name to track.")] string item) {
+        var result = await PxTrackingItemController.SetTrackingItemAsync(item);
+
+        if (result.UpsertedId.IsBsonNull) {
+            if (result.MatchedCount > 0) {
+                await RespondAsync($"Already tracking **{item}**.");
+                return;
+            }
+            
+            await RespondAsync($"Failed to start tracking **{item}**.");
+            return;
+        }
+
+        await RespondAsync($"Started tracking **{item}**!");
+    }
+
+    [SlashCommand("px-stop-tracking", "Stop tracking an item.")]
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [UsedImplicitly]
+    public async Task StopTrackingItemAsync([Summary(description: "Item name to stop tracking.")] string item) {
+        var result = await PxTrackingItemController.DeleteTrackingItemAsync(item);
+
+        if (result.DeletedCount > 0) {
+            await RespondAsync($"Stopped tracking **{item}**.");
+            return;
+        }
+
+        await RespondAsync($"Failed to stop tracking **{item}**!");
+    }
+
+    [SlashCommand("px-list-tracking", "List currently tracking items.")]
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [UsedImplicitly]
+    public async Task ListTrackingItemsAsync() {
+        var result = await PxTrackingItemController.GetTrackingItemsAsync();
+
+        await RespondAsync($"Currently tracking:\n{string.Join('\n', result.Select(x => $"- {x}"))}");
+    }
 }
