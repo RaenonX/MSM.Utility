@@ -4,7 +4,6 @@ using JetBrains.Annotations;
 using MSM.Bot.Enums;
 using MSM.Bot.Handlers.AutoComplete;
 using MSM.Common.Controllers;
-using MSM.Common.Utils;
 
 namespace MSM.Bot.Modules.SlashCommands;
 
@@ -36,7 +35,7 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
     [UsedImplicitly]
     public Task CheckTradeStationPriceAsync() => ShowTradeStationPxCheckAsync();
 
-    [SlashCommand("px", "Calls out the UI for Trade Station price check.")]
+    [SlashCommand("px-chart", "Get the link of the website that shows the pricing chart.")]
     [UsedImplicitly]
     public Task CheckTradeStationPxAsync() => ShowTradeStationPxCheckAsync();
 
