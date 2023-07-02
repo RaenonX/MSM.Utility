@@ -4,6 +4,7 @@ var builder = WebApplication.CreateBuilder(args).BuildCommon();
 
 builder.Services.AddCorsFromConfig();
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
 
 var app = builder
     .Build()
@@ -11,5 +12,6 @@ var app = builder
 
 app.UseCors();
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 await app.BootAsync();
