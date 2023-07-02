@@ -1,5 +1,6 @@
 using Discord;
 using Discord.WebSocket;
+using MSM.Bot.Extensions;
 using MSM.Bot.Handlers;
 using MSM.Common.Utils;
 
@@ -15,6 +16,17 @@ public class DiscordClientWorker : BackgroundService {
         _client = client;
     }
 
+    private async Task SendTestMessage() {
+        var messages = await Task.WhenAll(
+            (await _client.GetPxAlertChannelAsync()).SendMessageAsync("`SYSTEM` Price alert sending test"),
+            (await _client.GetSystemAlertChannelAsync()).SendMessageAsync("`SYSTEM` System alert sending test")
+        );
+
+        await Task.Delay(TimeSpan.FromSeconds(30));
+
+        await Task.WhenAll(messages.Select(x => x.DeleteAsync()));
+    }
+
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
         _client.Log += OnLogHandler.OnLogAsync;
 
@@ -22,6 +34,8 @@ public class DiscordClientWorker : BackgroundService {
 
         await _client.LoginAsync(TokenType.Bot, ConfigHelper.GetDiscordToken());
         await _client.StartAsync();
+
+        await SendTestMessage();
 
         await Task.Delay(Timeout.Infinite, cancellationToken);
     }

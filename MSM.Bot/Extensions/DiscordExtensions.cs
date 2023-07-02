@@ -27,11 +27,11 @@ public static class DiscordExtensions {
         return channel;
     }
 
-    public static Task<IMessageChannel> GetPxAlertChannel(this IDiscordClient client) {
+    public static Task<IMessageChannel> GetPxAlertChannelAsync(this IDiscordClient client) {
         return client.GetMessageChannel(ConfigHelper.GetDiscordPxAlertChannelId());
     }
 
-    public static Task<IMessageChannel> GetSystemAlertChannel(this IDiscordClient client) {
+    public static Task<IMessageChannel> GetSystemAlertChannelAsync(this IDiscordClient client) {
         return client.GetMessageChannel(ConfigHelper.GetDiscordSystemAlertChannelId());
     }
 }

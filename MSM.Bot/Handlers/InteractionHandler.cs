@@ -34,10 +34,11 @@ public class InteractionHandler {
         await _handler.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
         _client.InteractionCreated += OnInteractionCreated;
-        _handler.SlashCommandExecuted += OnSlashCommandExecuted;
         _client.ModalSubmitted += OnModalSubmitted;
         _client.SelectMenuExecuted += OnSelectMenuExecuted;
         _client.ButtonExecuted += OnButtonExecuted;
+        
+        _handler.SlashCommandExecuted += OnSlashCommandExecuted;
     }
 
     private async Task ReadyAsync() {

@@ -15,7 +15,7 @@ public class PxUpdateCheckWorker : BackgroundService {
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
-        var channel = await _client.GetSystemAlertChannel();
+        var channel = await _client.GetSystemAlertChannelAsync();
 
         while (!cancellationToken.IsCancellationRequested) {
             var lastValidTickUpdate = await PxMetaController.GetLastValidTickUpdate();

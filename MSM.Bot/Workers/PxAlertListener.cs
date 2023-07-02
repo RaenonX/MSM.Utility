@@ -17,7 +17,7 @@ public class PxAlertListener : BackgroundService {
     }
 
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
-        var channel = await _client.GetPxAlertChannel();
+        var channel = await _client.GetPxAlertChannelAsync();
         var options = new ChangeStreamOptions { FullDocument = ChangeStreamFullDocumentOption.UpdateLookup };
         var pipeline = new EmptyPipelineDefinition<ChangeStreamDocument<PxMetaModel>>()
             .Match(x =>
