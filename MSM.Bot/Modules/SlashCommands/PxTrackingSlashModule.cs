@@ -48,7 +48,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
         "px-set-alert",
         "Sets a price alert for item on Trade Station. Updates the alert on the item if already exists."
     )]
-    [RequiresRoleByConfigKey("PriceAlert")]
+    [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task SetTradeStationPxAlertAsync(
         [Summary(description: "Target item to trigger the alert.")]
@@ -63,7 +63,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-delete-alert", "Deletes a Trade Station price alert.")]
-    [RequiresRoleByConfigKey("PriceAlert")]
+    [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task DeleteTradeStationPxAlertAsync(
         [Summary(description: "Target item to delete the alert.")]
@@ -81,7 +81,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-list-alert", "List all price alerts.")]
-    [RequiresRoleByConfigKey("PriceAlert")]
+    [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task ListTradeStationPxAlertAsync() {
         var alerts = await PxAlertController.GetAllAlerts();
@@ -98,7 +98,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-start-tracking", "Start tracking an item's price.")]
-    [RequiresRoleByConfigKey("PriceAlert")]
+    [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task StartTrackingItemAsync([Summary(description: "Item name to track the price.")] string item) {
         var result = await PxTrackingItemController.SetTrackingItemAsync(item.Trim());
@@ -117,7 +117,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-stop-tracking", "Stop tracking an item's price.")]
-    [RequiresRoleByConfigKey("PriceAlert")]
+    [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task StopTrackingItemAsync(
         [Summary(description: "Item name to stop tracking its price.")] string item
@@ -133,7 +133,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-list-tracking", "List currently tracking items.")]
-    [RequiresRoleByConfigKey("PriceAlert")]
+    [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task ListTrackingItemsAsync() {
         var items = (await PxTrackingItemController
