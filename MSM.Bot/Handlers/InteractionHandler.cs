@@ -34,6 +34,7 @@ public class InteractionHandler {
         await _handler.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
         _client.InteractionCreated += OnInteractionCreated;
+        _handler.SlashCommandExecuted += OnSlashCommandExecuted;
         _client.ModalSubmitted += OnModalSubmitted;
         _client.SelectMenuExecuted += OnSelectMenuExecuted;
         _client.ButtonExecuted += OnButtonExecuted;
@@ -47,17 +48,19 @@ public class InteractionHandler {
         }
     }
 
+    private static Task OnInteractionExecuted(IInteractionContext context, IResult result) {
+        return result.IsSuccess
+            ? Task.CompletedTask
+            : context.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+    }
+
     private async Task OnInteractionCreated(SocketInteraction interaction) {
         try {
             var context = new SocketInteractionContext(_client, interaction);
 
             var result = await _handler.ExecuteCommandAsync(context, _services);
 
-            if (result.IsSuccess) {
-                return;
-            }
-            
-            await context.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            await OnInteractionExecuted(context, result);
         } catch {
             // If Slash Command execution fails, most likely the original interaction acknowledgement will persist.
             // It is a good idea to delete the original response,
@@ -68,6 +71,10 @@ public class InteractionHandler {
                     .ContinueWith(async msg => await msg.Result.DeleteAsync());
             }
         }
+    }
+
+    private static Task OnSlashCommandExecuted(SlashCommandInfo command, IInteractionContext context, IResult result) {
+        return OnInteractionExecuted(context, result);
     }
 
     private async Task OnModalSubmitted(SocketModal modal) {

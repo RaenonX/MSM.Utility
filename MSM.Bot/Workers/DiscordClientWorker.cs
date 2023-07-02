@@ -18,9 +18,7 @@ public class DiscordClientWorker : BackgroundService {
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
         _client.Log += OnLogHandler.OnLogAsync;
 
-        await _services
-            .GetRequiredService<InteractionHandler>()
-            .InitializeAsync();
+        await _services.GetRequiredService<InteractionHandler>().InitializeAsync();
 
         await _client.LoginAsync(TokenType.Bot, ConfigHelper.GetDiscordToken());
         await _client.StartAsync();
