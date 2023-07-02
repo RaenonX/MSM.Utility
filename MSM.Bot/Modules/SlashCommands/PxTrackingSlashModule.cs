@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Interactions;
 using JetBrains.Annotations;
+using MSM.Bot.Attributes;
 using MSM.Bot.Enums;
 using MSM.Bot.Handlers.AutoComplete;
 using MSM.Common.Controllers;
@@ -47,7 +48,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
         "px-set-alert",
         "Sets a price alert for item on Trade Station. Updates the alert on the item if already exists."
     )]
-    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [RequiresRoleByConfigKey("PriceAlert")]
     [UsedImplicitly]
     public async Task SetTradeStationPxAlertAsync(
         [Summary(description: "Target item to trigger the alert.")]
@@ -62,7 +63,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-delete-alert", "Deletes a Trade Station price alert.")]
-    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [RequiresRoleByConfigKey("PriceAlert")]
     [UsedImplicitly]
     public async Task DeleteTradeStationPxAlertAsync(
         [Summary(description: "Target item to delete the alert.")]
@@ -80,7 +81,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-list-alert", "List all price alerts.")]
-    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [RequiresRoleByConfigKey("PriceAlert")]
     [UsedImplicitly]
     public async Task ListTradeStationPxAlertAsync() {
         var alerts = await PxAlertController.GetAllAlerts();
@@ -96,10 +97,10 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
         );
     }
 
-    [SlashCommand("px-start-tracking", "Start tracking an item.")]
-    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [SlashCommand("px-start-tracking", "Start tracking an item's price.")]
+    [RequiresRoleByConfigKey("PriceAlert")]
     [UsedImplicitly]
-    public async Task StartTrackingItemAsync([Summary(description: "Item name to track.")] string item) {
+    public async Task StartTrackingItemAsync([Summary(description: "Item name to track the price.")] string item) {
         var result = await PxTrackingItemController.SetTrackingItemAsync(item.Trim());
 
         if (result.UpsertedId.IsBsonNull) {
@@ -115,10 +116,12 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
         await RespondAsync($"Started tracking **{item}**!");
     }
 
-    [SlashCommand("px-stop-tracking", "Stop tracking an item.")]
-    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [SlashCommand("px-stop-tracking", "Stop tracking an item's price.")]
+    [RequiresRoleByConfigKey("PriceAlert")]
     [UsedImplicitly]
-    public async Task StopTrackingItemAsync([Summary(description: "Item name to stop tracking.")] string item) {
+    public async Task StopTrackingItemAsync(
+        [Summary(description: "Item name to stop tracking its price.")] string item
+    ) {
         var result = await PxTrackingItemController.DeleteTrackingItemAsync(item);
 
         if (result.DeletedCount > 0) {
@@ -130,7 +133,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     }
 
     [SlashCommand("px-list-tracking", "List currently tracking items.")]
-    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [RequiresRoleByConfigKey("PriceAlert")]
     [UsedImplicitly]
     public async Task ListTrackingItemsAsync() {
         var items = (await PxTrackingItemController

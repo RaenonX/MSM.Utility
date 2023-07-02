@@ -15,13 +15,16 @@ public class InteractionHandler {
 
     private readonly IServiceProvider _services;
 
+    private readonly IHostEnvironment _environment;
+
     public InteractionHandler(
         DiscordSocketClient client, InteractionService handler,
-        IServiceProvider services
+        IServiceProvider services, IHostEnvironment environment
     ) {
         _client = client;
         _handler = handler;
         _services = services;
+        _environment = environment;
     }
 
     public async Task InitializeAsync() {
@@ -37,7 +40,11 @@ public class InteractionHandler {
     }
 
     private async Task ReadyAsync() {
-        await _handler.RegisterCommandsGloballyAsync();
+        if (_environment.IsDevelopment())
+            await _handler.RegisterCommandsToGuildAsync(1100607979734188043);
+        else {
+            await _handler.RegisterCommandsGloballyAsync();
+        }
     }
 
     private async Task OnInteractionCreated(SocketInteraction interaction) {
@@ -46,36 +53,11 @@ public class InteractionHandler {
 
             var result = await _handler.ExecuteCommandAsync(context, _services);
 
-            if (!result.IsSuccess) {
-                switch (result.Error) {
-                    case InteractionCommandError.UnmetPrecondition:
-                        await context.Channel.SendMessageAsync("Command execution meet the precondition.");
-                        break;
-                    case InteractionCommandError.UnknownCommand:
-                        // Ignore unknown command
-                        break;
-                    case InteractionCommandError.ConvertFailed:
-                        await context.Channel.SendMessageAsync("Command argument conversion failed.");
-                        break;
-                    case InteractionCommandError.BadArgs:
-                        await context.Channel.SendMessageAsync("Bad command arguments.");
-                        break;
-                    case InteractionCommandError.Exception:
-                        await context.Channel.SendMessageAsync("App exception occurred during command execution.");
-                        break;
-                    case InteractionCommandError.Unsuccessful:
-                        await context.Channel.SendMessageAsync("Unsuccessful command execution.");
-                        break;
-                    case InteractionCommandError.ParseFailed:
-                        await context.Channel.SendMessageAsync("Command parsing failed.");
-                        break;
-                    case null:
-                        await context.Channel.SendMessageAsync("Unknown command execution error.");
-                        break;
-                    default:
-                        throw new ArgumentException($"Unhandled command execution error: {result.Error}");
-                }
+            if (result.IsSuccess) {
+                return;
             }
+            
+            await context.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
         } catch {
             // If Slash Command execution fails, most likely the original interaction acknowledgement will persist.
             // It is a good idea to delete the original response,
