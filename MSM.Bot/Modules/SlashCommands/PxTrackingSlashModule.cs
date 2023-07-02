@@ -116,8 +116,15 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [UsedImplicitly]
     public async Task ListTrackingItemsAsync() {
-        var result = await PxTrackingItemController.GetTrackingItemsAsync();
+        var items = (await PxTrackingItemController
+            .GetTrackingItemsAsync())
+            .Select(x => $"- {x}")
+            .ToList();
 
-        await RespondAsync($"Currently tracking:\n{string.Join('\n', result.Select(x => $"- {x}"))}");
+        if (items.Count == 0) {
+            await RespondAsync("Currently not tracking any items.");
+        }
+
+        await RespondAsync($"Currently tracking {items.Count} items:\n{string.Join('\n', items)}");
     }
 }
