@@ -37,6 +37,10 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
 
     [SlashCommand("px-chart", "Get the link of the website that shows the pricing chart.")]
     [UsedImplicitly]
+    public Task ShowPxChartLinkAsync() => RespondAsync("https://msm.raenonx.cc", ephemeral: true);
+
+    [SlashCommand("px", "Calls out the UI for Trade Station price check.")]
+    [UsedImplicitly]
     public Task CheckTradeStationPxAsync() => ShowTradeStationPxCheckAsync();
 
     [SlashCommand(
