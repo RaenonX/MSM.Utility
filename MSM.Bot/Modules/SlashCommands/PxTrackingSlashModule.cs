@@ -118,7 +118,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     public async Task ListTrackingItemsAsync() {
         var items = (await PxTrackingItemController
             .GetTrackingItemsAsync())
-            .Select(x => $"- {x}")
+            .Select(x => $"- {x.Item}")
             .ToList();
 
         if (items.Count == 0) {

@@ -27,7 +27,7 @@ public class ItemController : ControllerBase {
     [Route("tracking")]
     public async Task<ActionResult> GetTrackingItems() {
         _logger.LogInformation("Getting tracking items");
-        
-        return Content(string.Join(',', (await PxTrackingItemController.GetTrackingItemsAsync()).Order()));
+
+        return Content(string.Join(',', (await PxTrackingItemController.GetTrackingItemsAsync()).Select(x => x.Item)));
     }
 }

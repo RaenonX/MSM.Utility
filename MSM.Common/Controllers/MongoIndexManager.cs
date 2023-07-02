@@ -8,6 +8,7 @@ public static class MongoIndexManager {
         return new[] {
             PxDataIndex(),
             PxAlertIndex(),
+            PxTrackingItemIndex(),
             PxMetaIndex()
         };
     }
@@ -36,6 +37,17 @@ public static class MongoIndexManager {
         var indexModel = new CreateIndexModel<PxAlertModel>(indexKeys, indexOptions);
 
         await MongoConst.PxAlertCollection.Indexes.CreateOneAsync(indexModel);
+    }
+
+    private static async Task PxTrackingItemIndex() {
+        var indexOptions = new CreateIndexOptions {
+            Name = "TrackingItem",
+            Unique = true
+        };
+        var indexKeys = Builders<PxTrackingItemModel>.IndexKeys.Ascending(data => data.Item);
+        var indexModel = new CreateIndexModel<PxTrackingItemModel>(indexKeys, indexOptions);
+
+        await MongoConst.PxTrackingItemCollection.Indexes.CreateOneAsync(indexModel);
     }
     
     private static async Task PxMetaIndex() {

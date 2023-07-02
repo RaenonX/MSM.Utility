@@ -12,9 +12,10 @@ public static class PxTrackingItemController {
         );
     }
 
-    public static async Task<IEnumerable<string>> GetTrackingItemsAsync() {
-        return (await MongoConst.PxTrackingItemCollection.Find(_ => true).ToListAsync())
-            .Select(x => x.Item);
+    public static Task<List<PxTrackingItemModel>> GetTrackingItemsAsync() {
+        return MongoConst.PxTrackingItemCollection.Find(_ => true)
+                .SortBy(x => x.Item)
+                .ToListAsync();
     }
 
     public static Task<DeleteResult> DeleteTrackingItemAsync(string item) {
