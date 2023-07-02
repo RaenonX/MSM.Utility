@@ -7,7 +7,7 @@ using MSM.Common.Controllers;
 
 namespace MSM.Bot.Modules.SlashCommands;
 
-public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext> {
+public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionContext> {
     private async Task ShowTradeStationPxCheckAsync() {
         var availableItems = (await PxTickController.GetAvailableItemsAsync())
             .Order()
@@ -83,7 +83,7 @@ public class PxAlertSlashModule : InteractionModuleBase<SocketInteractionContext
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [UsedImplicitly]
     public async Task StartTrackingItemAsync([Summary(description: "Item name to track.")] string item) {
-        var result = await PxTrackingItemController.SetTrackingItemAsync(item);
+        var result = await PxTrackingItemController.SetTrackingItemAsync(item.Trim());
 
         if (result.UpsertedId.IsBsonNull) {
             if (result.MatchedCount > 0) {
