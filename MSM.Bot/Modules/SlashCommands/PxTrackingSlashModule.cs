@@ -79,6 +79,23 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
         await RespondAsync($"Price alert of **{item}** not found.");
     }
 
+    [SlashCommand("px-list-alert", "List all price alerts.")]
+    [DefaultMemberPermissions(GuildPermission.Administrator)]
+    [UsedImplicitly]
+    public async Task ListTradeStationPxAlertAsync() {
+        var alerts = await PxAlertController.GetAllAlerts();
+
+        if (alerts.Count == 0) {
+            await RespondAsync("No active price alerts.");
+            return;
+        }
+
+        await RespondAsync(
+            $"**{alerts.Count}** price alerts in effect:\n" +
+            $"{string.Join('\n', alerts.Select(x => $"- {x.Item} @ **{x.MaxPx:#,###}**"))}"
+        );
+    }
+
     [SlashCommand("px-start-tracking", "Start tracking an item.")]
     [DefaultMemberPermissions(GuildPermission.Administrator)]
     [UsedImplicitly]
@@ -90,7 +107,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
                 await RespondAsync($"Already tracking **{item}**.");
                 return;
             }
-            
+
             await RespondAsync($"Failed to start tracking **{item}**.");
             return;
         }
@@ -117,7 +134,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     [UsedImplicitly]
     public async Task ListTrackingItemsAsync() {
         var items = (await PxTrackingItemController
-            .GetTrackingItemsAsync())
+                .GetTrackingItemsAsync())
             .Select(x => $"- {x.Item}")
             .ToList();
 

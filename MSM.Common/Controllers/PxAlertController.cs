@@ -48,6 +48,10 @@ public static class PxAlertController {
         );
     }
 
+    public static Task<List<PxAlertModel>> GetAllAlerts() {
+        return MongoConst.PxAlertCollection.Find(_ => true).SortBy(x => x.Item).ToListAsync();
+    }
+
     public static Task<DeleteResult> DeleteAlert(string item) {
         return MongoConst.PxAlertCollection.DeleteOneAsync(x => x.Item == item);
     }
