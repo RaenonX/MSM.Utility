@@ -10,7 +10,7 @@ public static class PxAlertController {
             var utcNow = DateTime.UtcNow;
 
             return await MongoConst.PxAlertCollection
-                .FindOneAndUpdateAsync<PxAlertModel>(
+                .FindOneAndUpdateAsync(
                     // Alert needs to
                     // - Match the item name
                     // - Current time should be >= `NextAlert` meaning it's allowed to send another alert
@@ -22,11 +22,7 @@ public static class PxAlertController {
                             x => x.NextAlert,
                             utcNow + TimeSpan.FromSeconds(ConfigHelper.GetAlertIntervalSec())
                         )
-                        .Set(x => x.AlertedAt, itemPx),
-                    // Return the alert after update
-                    new FindOneAndUpdateOptions<PxAlertModel> {
-                        ReturnDocument = ReturnDocument.After
-                    }
+                        .Set(x => x.AlertedAt, itemPx)
                 );
         } catch (InvalidOperationException e) {
             if (e.Message == "Sequence contains no elements") {
