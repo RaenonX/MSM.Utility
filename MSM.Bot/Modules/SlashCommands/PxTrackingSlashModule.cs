@@ -3,6 +3,7 @@ using Discord.Interactions;
 using JetBrains.Annotations;
 using MSM.Bot.Attributes;
 using MSM.Bot.Enums;
+using MSM.Bot.Extensions;
 using MSM.Bot.Handlers.AutoComplete;
 using MSM.Common.Controllers;
 
@@ -61,7 +62,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
 
         await PxAlertController.SetAlert(item, maxPx);
 
-        var messageLines = new List<string> { $"Price alert of **{item}** @ **{maxPx:#,###}** set!" };
+        var messageLines = new List<string> { $"Price alert of **{item}** @ {maxPx.ToMesoText()} set!" };
         if (startedTracking) {
             messageLines.Add($"> **{item}** was not being tracked, started tracking now.");
         }
@@ -100,7 +101,10 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
 
         await RespondAsync(
             $"**{alerts.Count}** price alerts in effect:\n" +
-            $"{string.Join('\n', alerts.Select(x => $"- {x.Item} @ **{x.MaxPx:#,###}**"))}"
+            string.Join(
+                '\n',
+                alerts.Select(x => $"- {x.Item} @ {x.MaxPx.ToMesoText()}")
+            )
         );
     }
 

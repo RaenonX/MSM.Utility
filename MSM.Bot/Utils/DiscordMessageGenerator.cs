@@ -1,4 +1,5 @@
-﻿using MSM.Common.Controllers;
+﻿using MSM.Bot.Extensions;
+using MSM.Common.Controllers;
 
 namespace MSM.Bot.Utils;
 
@@ -13,7 +14,7 @@ public static class DiscordMessageGenerator {
 
                 var secsAgo = (DateTime.UtcNow - x.Value.Timestamp).TotalSeconds;
 
-                return $"{x.Key}: **{x.Value.Px:#,###}**\n" +
+                return $"{x.Key}: {x.Value.Px.ToMesoText()}\n" +
                        $"> Last Updated: {x.Value.Timestamp} (UTC) - {secsAgo:0} secs ago";
             })
         );

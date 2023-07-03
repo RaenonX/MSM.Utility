@@ -1,5 +1,6 @@
 ﻿using Discord;
 using MSM.Bot.Enums;
+using MSM.Common.Extensions;
 using MSM.Common.Utils;
 
 namespace MSM.Bot.Extensions;
@@ -17,6 +18,12 @@ public static class DiscordExtensions {
             );
 
         return builder.Build();
+    }
+
+    public static string ToMesoText(this decimal meso) {
+        return meso < 1E6m ? 
+            $"**{meso:#,###}**" : 
+            $"**{meso.ToAbbreviation(decimals: 2)}** ({meso:#,###})";
     }
 
     private static async Task<IMessageChannel> GetMessageChannel(this IDiscordClient client, ulong channelId) {

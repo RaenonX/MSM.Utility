@@ -30,25 +30,26 @@ public class PxAlertListener : BackgroundService {
             .WatchAsync(pipeline, options, cancellationToken);
 
         await cursor.ForEachAsync(async change => {
-            var alert = await PxAlertController.GetAlert(change.FullDocument.Item, change.FullDocument.Px);
+            var updatedMeta = change.FullDocument;
+            var alert = await PxAlertController.GetAlert(updatedMeta.Item, updatedMeta.Px);
 
             _logger.LogInformation(
                 "Received Px meta change on {Item} for {Px} ({WillAlert})",
-                change.FullDocument.Item,
-                change.FullDocument.Px,
+                updatedMeta.Item,
+                updatedMeta.Px,
                 alert is null ? "Non-alert" : "Alert"
             );
 
             // If alert not found, interval not passed, or already alerted at the same price,
             // don't send message notification
-            if (alert is null || alert.AlertedAt == change.FullDocument.Px) {
+            if (alert is null || alert.AlertedAt == updatedMeta.Px) {
                 return;
             }
 
             await channel.SendMessageAsync(
-                $"Price of **{change.FullDocument.Item}** at **{change.FullDocument.Px:#,###}** now!\n" +
-                $"> Alert Threshold: **{alert.MaxPx:#,###}**\n" +
-                $"> Last Updated: {change.FullDocument.LastUpdate} (UTC)"
+                $"Price of **{updatedMeta.Item}** at {updatedMeta.Px.ToMesoText()} now!\n" +
+                $"> Alert Threshold: {alert.MaxPx.ToMesoText()}**)\n" +
+                $"> Last Updated: {updatedMeta.LastUpdate} (UTC)"
             );
         }, cancellationToken);
     }
