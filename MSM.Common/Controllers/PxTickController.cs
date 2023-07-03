@@ -18,7 +18,7 @@ public static class PxTickController {
 
     private const int PxVerificationRequiredCount = 3;
 
-    private const int PxVerificationTimeoutMin = 3;
+    private const int PxVerificationTimeoutSec = 60;
 
     private static Task RecordPx(
         IMongoCollection<PxDataModel> collection,
@@ -74,7 +74,7 @@ public static class PxTickController {
             // Price diff > threshold / large price fluctuation could indicate it checked wrong item
             (latest is not null && MathHelper.DifferencePct(latest.Px, px) > PxVerificationThresholdPct) ||
             // Verification queue is not empty and the data count is not enough / verification in progress
-            verificationQueue is { IsEmpty: false, Count: < PxVerificationRequiredCount - 1 }
+            verificationQueue is { IsEmpty: false, Count: < PxVerificationRequiredCount }
         ) {
             // Price diff < threshold comparing latest in DB / current data in queue is incorrect
             if (latestInDb is not null && MathHelper.DifferencePct(latestInDb.Px, px) < PxVerificationThresholdPct) {
@@ -87,7 +87,7 @@ public static class PxTickController {
             verificationQueue.TryPeek(out var queueTop);
             while (
                 queueTop is not null &&
-                DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromMinutes(PxVerificationTimeoutMin)
+                DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromSeconds(PxVerificationTimeoutSec)
             ) {
                 verificationQueue.TryDequeue(out var dequeued);
 
@@ -103,14 +103,17 @@ public static class PxTickController {
 
             // Insert incoming data into verification queue
             verificationQueue.Enqueue(incoming);
+        }
 
+        // Still verifying (got something in queue) and not satisfying required count, after queue modification 
+        if (verificationQueue is { IsEmpty: false, Count: < PxVerificationRequiredCount }) {
             Logger.LogInformation(
                 "Received {Item} at {Px} ({CountToVerify} in verification queue)",
                 item,
                 px,
                 verificationQueue.Count
             );
-
+            
             return PxRecordResult.VerificationPending;
         }
 
@@ -147,6 +150,7 @@ public static class PxTickController {
         if (start is not null) {
             filters.Add(FilterBuilder.Where(x => x.Timestamp >= start));
         }
+
         if (end is not null) {
             filters.Add(FilterBuilder.Where(x => x.Timestamp <= end));
         }
