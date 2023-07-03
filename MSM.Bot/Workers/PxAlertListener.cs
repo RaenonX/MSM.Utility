@@ -48,7 +48,7 @@ public class PxAlertListener : BackgroundService {
 
             await channel.SendMessageAsync(
                 $"Price of **{updatedMeta.Item}** at {updatedMeta.Px.ToMesoText()} now!\n" +
-                $"> Alert Threshold: {alert.MaxPx.ToMesoText()}**)\n" +
+                $"> Alert Threshold: {alert.MaxPx.ToMesoText()}\n" +
                 $"> Last Updated: {updatedMeta.LastUpdate} (UTC)"
             );
         }, cancellationToken);
