@@ -144,7 +144,7 @@ public static class PxTickController {
             );
     }
 
-    public static async Task<IEnumerable<PxDataModel>> GetDataBetween(string item, DateTime? start, DateTime? end) {
+    public static IEnumerable<PxDataModel> GetDataBetween(string item, DateTime? start, DateTime? end) {
         var filters = new List<FilterDefinition<PxDataModel>>();
 
         if (start is not null) {
@@ -155,10 +155,9 @@ public static class PxTickController {
             filters.Add(FilterBuilder.Where(x => x.Timestamp <= end));
         }
 
-        var findFilter = filters.Count == 0 ? FilterBuilder.Empty : FilterBuilder.And(filters);
-
-        return (await MongoConst.GetPxTickCollection(item).FindAsync(findFilter))
-            .ToEnumerable()
-            .OrderBy(x => x.Timestamp);
+        return MongoConst.GetPxTickCollection(item)
+            .Find(filters.Count == 0 ? FilterBuilder.Empty : FilterBuilder.And(filters))
+            .SortBy(x => x.Timestamp)
+            .ToEnumerable();
     }
 }
