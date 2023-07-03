@@ -6,18 +6,13 @@ public static class NumberExtensions {
     }
 
     public static string ToAbbreviation(this decimal number, int decimals = 3) {
-        if (number > 1E9m) {
-            return $"{(number / 1E9m).ToString($"F{decimals}")} B";
-        }
+        var numberForCheck = Math.Abs(number);
 
-        if (number > 1E6m) {
-            return $"{(number / 1E6m).ToString($"F{decimals}")} M";
-        }
-        
-        if (number > 1E3m) {
-            return $"{(number / 1E3m).ToString($"F{decimals}")} K";
-        }
-
-        return $"{number.ToString($"F{decimals}")}";
+        return numberForCheck switch {
+            > 1E9m => $"{(number / 1E9m).ToString($"F{decimals}")} B",
+            > 1E6m => $"{(number / 1E6m).ToString($"F{decimals}")} M",
+            > 1E3m => $"{(number / 1E3m).ToString($"F{decimals}")} K",
+            _ => $"{number.ToString($"F{decimals}")}"
+        };
     }
 }
