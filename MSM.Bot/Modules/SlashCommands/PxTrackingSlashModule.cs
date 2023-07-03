@@ -57,9 +57,16 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
         [Summary(description: "Price alert threshold. If the current price falls below this, sends an alert.")]
         decimal maxPx
     ) {
+        var startedTracking = await PxTrackingItemController.SetTrackingItemAsync(item);
+
         await PxAlertController.SetAlert(item, maxPx);
 
-        await RespondAsync($"Price alert of **{item}** @ **{maxPx:#,###}** set!");
+        var messageLines = new List<string> { $"Price alert of **{item}** @ **{maxPx:#,###}** set!" };
+        if (startedTracking) {
+            messageLines.Add($"> **{item}** was not being tracked, started tracking now.");
+        }
+
+        await RespondAsync(string.Join('\n', messageLines));
     }
 
     [SlashCommand("px-delete-alert", "Deletes a Trade Station price alert.")]
@@ -101,15 +108,10 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task StartTrackingItemAsync([Summary(description: "Item name to track the price.")] string item) {
-        var result = await PxTrackingItemController.SetTrackingItemAsync(item.Trim());
+        var startedTracking = await PxTrackingItemController.SetTrackingItemAsync(item);
 
-        if (result.UpsertedId.IsBsonNull) {
-            if (result.MatchedCount > 0) {
-                await RespondAsync($"Already tracking **{item}**.");
-                return;
-            }
-
-            await RespondAsync($"Failed to start tracking **{item}**.");
+        if (!startedTracking) {
+            await RespondAsync($"Already tracking **{item}**.");
             return;
         }
 
