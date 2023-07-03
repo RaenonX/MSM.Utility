@@ -15,16 +15,10 @@ public class InteractionHandler {
 
     private readonly IServiceProvider _services;
 
-    private readonly IHostEnvironment _environment;
-
-    public InteractionHandler(
-        DiscordSocketClient client, InteractionService handler,
-        IServiceProvider services, IHostEnvironment environment
-    ) {
+    public InteractionHandler(DiscordSocketClient client, InteractionService handler, IServiceProvider services) {
         _client = client;
         _handler = handler;
         _services = services;
-        _environment = environment;
     }
 
     public async Task InitializeAsync() {
@@ -42,11 +36,7 @@ public class InteractionHandler {
     }
 
     private async Task ReadyAsync() {
-        if (_environment.IsDevelopment())
-            await _handler.RegisterCommandsToGuildAsync(1100607979734188043);
-        else {
-            await _handler.RegisterCommandsGloballyAsync();
-        }
+        await _handler.RegisterCommandsGloballyAsync();
     }
 
     private static Task OnInteractionExecuted(IInteractionContext context, IResult result) {
