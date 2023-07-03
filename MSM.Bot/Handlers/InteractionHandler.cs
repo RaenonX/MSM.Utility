@@ -52,7 +52,7 @@ public class InteractionHandler {
     private static Task OnInteractionExecuted(IInteractionContext context, IResult result) {
         return result.IsSuccess
             ? Task.CompletedTask
-            : context.Interaction.RespondAsync(result.ErrorReason, ephemeral: true);
+            : context.Interaction.RespondAsync($"{result.Error}: {result.ErrorReason}", ephemeral: true);
     }
 
     private async Task OnInteractionCreated(SocketInteraction interaction) {
