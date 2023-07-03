@@ -34,7 +34,7 @@ public class PxController : ControllerBase {
     }
 
     [HttpGet]
-    public JsonResult GetCalculatedBars(
+    public async Task<JsonResult> GetCalculatedBars(
         [FromQuery] string item,
         [FromQuery] DateTime? start,
         [FromQuery] DateTime? end,
@@ -49,7 +49,8 @@ public class PxController : ControllerBase {
         );
 
         return new JsonResult(new PxBarResponse {
-            Timestamp = DateTime.UtcNow,
+            FetchedAt = DateTime.UtcNow,
+            LastUpdated = await PxMetaController.GetLastValidTickUpdate(item),
             Item = item,
             Bars = PxDataAggregator.GetBars(item, start, end, intervalMin)
         });
