@@ -18,7 +18,7 @@ public static class PxTickController {
 
     private const int PxVerificationRequiredCount = 3;
 
-    private const int PxVerificationTimeoutSec = 60;
+    private const int PxVerificationTimeoutSec = 45;
 
     private static Task RecordPx(
         IMongoCollection<PxDataModel> collection,
@@ -50,6 +50,44 @@ public static class PxTickController {
         return Task.WhenAll(recordPxTask, metaUpdateTask);
     }
 
+    private static bool IsPriceDiffOverThreshold(this decimal px1, decimal px2) {
+        return MathHelper.DifferencePct(px1, px2) > PxVerificationThresholdPct;
+    }
+    
+    private static void ClearInvalidData(this ConcurrentQueue<PxDataModel> queue, string item, decimal px) {
+        // Remove timed-out entries in the verification queue
+        queue.TryPeek(out var queueTop);
+        while (
+            queueTop is not null &&
+            DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromSeconds(PxVerificationTimeoutSec)
+        ) {
+            queue.TryDequeue(out var dequeued);
+
+            Logger.LogInformation(
+                "Removed timed out entry of {Item} from queue ({PoppedTimestamp} @ {Px})",
+                item,
+                dequeued?.Timestamp,
+                dequeued?.Px
+            );
+
+            queue.TryPeek(out queueTop);
+        }
+        
+        // Remove entries with price fluctuation > threshold
+        while (queueTop is not null && px.IsPriceDiffOverThreshold(queueTop.Px)) {
+            queue.TryDequeue(out var dequeued);
+
+            Logger.LogInformation(
+                "Removed large px fluctuation entry of {Item} from queue ({PoppedTimestamp} @ {Px})",
+                item,
+                dequeued?.Timestamp,
+                dequeued?.Px
+            );
+
+            queue.TryPeek(out queueTop);
+        }
+    }
+
     public static async Task<PxRecordResult> RecordPx(string item, decimal px) {
         var collection = MongoConst.GetPxTickCollection(item);
         var verificationQueue = VerificationPendingQueue.GetOrAdd(item, new ConcurrentQueue<PxDataModel>());
@@ -72,34 +110,18 @@ public static class PxTickController {
             // Empty collection / new data, could be a glitch
             (verificationQueue.IsEmpty && await collection.EstimatedDocumentCountAsync() == 0) ||
             // Price diff > threshold / large price fluctuation could indicate it checked wrong item
-            (latest is not null && MathHelper.DifferencePct(latest.Px, px) > PxVerificationThresholdPct) ||
+            (latest is not null && px.IsPriceDiffOverThreshold(latest.Px)) ||
             // Verification queue is not empty and the data count is not enough / verification in progress
             verificationQueue is { IsEmpty: false, Count: < PxVerificationRequiredCount }
         ) {
             // Price diff < threshold comparing latest in DB / current data in queue is incorrect
-            if (latestInDb is not null && MathHelper.DifferencePct(latestInDb.Px, px) < PxVerificationThresholdPct) {
+            if (latestInDb is not null && !px.IsPriceDiffOverThreshold(latestInDb.Px)) {
                 await RecordPx(collection, verificationQueue, item, incoming, abortQueue: true);
 
                 return PxRecordResult.RecordedWithQueueAborted;
             }
 
-            // Remove timed-out entries in the verification queue
-            verificationQueue.TryPeek(out var queueTop);
-            while (
-                queueTop is not null &&
-                DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromSeconds(PxVerificationTimeoutSec)
-            ) {
-                verificationQueue.TryDequeue(out var dequeued);
-
-                Logger.LogInformation(
-                    "Removed timed out entry of {Item} from queue ({PoppedTimestamp} @ {Px})",
-                    item,
-                    dequeued?.Timestamp,
-                    dequeued?.Px
-                );
-
-                verificationQueue.TryPeek(out queueTop);
-            }
+            verificationQueue.ClearInvalidData(item, px);
 
             // Insert incoming data into verification queue
             verificationQueue.Enqueue(incoming);
