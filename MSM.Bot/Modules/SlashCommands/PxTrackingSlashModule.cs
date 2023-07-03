@@ -131,7 +131,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
             return;
         }
 
-        await RespondAsync($"Failed to stop tracking **{item}**!");
+        await RespondAsync($"**{item}** is not in the tracking list.");
     }
 
     [SlashCommand("px-list-tracking", "List currently tracking items.")]
