@@ -40,9 +40,12 @@ public class InteractionHandler {
     }
 
     private static Task OnInteractionExecuted(IInteractionContext context, IResult result) {
-        return result.IsSuccess
-            ? Task.CompletedTask
-            : context.Interaction.RespondAsync($"{result.Error}: {result.ErrorReason}", ephemeral: true);
+        if (result.IsSuccess || result.Error == InteractionCommandError.UnknownCommand) {
+            // Ignoring unknown command since it's possible to happen for follow up modal interactions
+            return Task.CompletedTask;
+        }
+        
+        return context.Interaction.RespondAsync($"{result.Error}: {result.ErrorReason}", ephemeral: true);
     }
 
     private async Task OnInteractionCreated(SocketInteraction interaction) {
