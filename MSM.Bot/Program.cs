@@ -6,7 +6,9 @@ using MSM.Bot.Workers;
 using MSM.Common.Extensions;
 
 var socketConfig = new DiscordSocketConfig {
-    GatewayIntents = GatewayIntents.AllUnprivileged | GatewayIntents.GuildEmojis,
+    GatewayIntents =
+        (GatewayIntents.AllUnprivileged & ~GatewayIntents.GuildScheduledEvents & ~GatewayIntents.GuildInvites) |
+        GatewayIntents.GuildEmojis,
     AlwaysDownloadUsers = true
 };
 
