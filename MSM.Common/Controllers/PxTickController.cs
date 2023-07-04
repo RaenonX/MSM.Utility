@@ -144,8 +144,8 @@ public static class PxTickController {
         return PxRecordResult.Recorded;
     }
 
-    public static Task<IEnumerable<string>> GetAvailableItemsAsync() {
-        return MongoConst.PxTickDatabase.GetCollectionNames();
+    public static async Task<IEnumerable<string>> GetAvailableItemsAsync() {
+        return (await MongoConst.PxTickDatabase.GetCollectionNames()).Order();
     }
 
     private static async Task<KeyValuePair<string, PxDataModel?>> GetLatestOfItem(string item) {

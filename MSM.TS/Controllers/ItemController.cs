@@ -19,7 +19,7 @@ public class ItemController : ControllerBase {
         _logger.LogInformation("Getting available items");
 
         return new JsonResult(new AvailableItemsResponse {
-            Items = (await PxTickController.GetAvailableItemsAsync()).Order()
+            Items = (await PxTickController.GetAvailableItemsAsync())
         });
     }
 

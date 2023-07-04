@@ -32,6 +32,7 @@
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E0896AFA4950254F878701C42CA4C4AD/Shortcut/@EntryValue">prgi</s:String>
 	<s:Boolean x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E0896AFA4950254F878701C42CA4C4AD/ShortenQualifiedReferences/@EntryValue">True</s:Boolean>
 	<s:String x:Key="/Default/PatternsAndTemplates/LiveTemplates/Template/=E0896AFA4950254F878701C42CA4C4AD/Text/@EntryValue">public required $type$ $property$ { get; init; }</s:String>
+	<s:Boolean x:Key="/Default/UserDictionary/Words/=Alertable/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=appsettings/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=bijass/@EntryIndexedValue">True</s:Boolean>
 	<s:Boolean x:Key="/Default/UserDictionary/Words/=bijasses/@EntryIndexedValue">True</s:Boolean>

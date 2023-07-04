@@ -14,9 +14,9 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     )]
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
-    public async Task SetTradeStationPxAlertAsync(
+    public async Task SetPxAlertAsync(
         [Summary(description: "Target item to trigger the alert.")]
-        [Autocomplete(typeof(PxAlertItemAutoCompleteHandler))]
+        [Autocomplete(typeof(PxAlertableItemsAutoCompleteHandler))]
         string item,
         [Summary(description: "Price alert threshold. If the current price falls below this, sends an alert.")]
         decimal maxPx
@@ -36,9 +36,9 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     [SlashCommand("px-delete-alert", "Deletes a Trade Station price alert.")]
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
-    public async Task DeleteTradeStationPxAlertAsync(
+    public async Task DeletePxAlertAsync(
         [Summary(description: "Target item to delete the alert.")]
-        [Autocomplete(typeof(PxAlertItemAutoCompleteHandler))]
+        [Autocomplete(typeof(PxAlertingItemsAutoCompleteHandler))]
         string item
     ) {
         var result = await PxAlertController.DeleteAlert(item);
@@ -54,7 +54,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     [SlashCommand("px-list-alert", "List all price alerts.")]
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
-    public async Task ListTradeStationPxAlertAsync() {
+    public async Task ListPxAlertAsync() {
         var alerts = await PxAlertController.GetAllAlerts();
 
         if (alerts.Count == 0) {
@@ -89,7 +89,9 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task StopTrackingItemAsync(
-        [Summary(description: "Item name to stop tracking its price.")] string item
+        [Summary(description: "Item name to stop tracking its price.")] 
+        [Autocomplete(typeof(PxTrackingItemsAutoCompleteHandler))]
+        string item
     ) {
         var result = await PxTrackingItemController.DeleteTrackingItemAsync(item);
 

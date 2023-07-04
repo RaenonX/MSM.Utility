@@ -9,7 +9,6 @@ namespace MSM.Bot.Modules.SlashCommands;
 public class PxCheckingSlashModule : InteractionModuleBase<SocketInteractionContext> {
     private async Task ShowTradeStationPxCheckAsync() {
         var availableItems = (await PxTickController.GetAvailableItemsAsync())
-            .Order()
             .ToList();
 
         var menuBuilder = new SelectMenuBuilder()
