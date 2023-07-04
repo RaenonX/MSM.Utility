@@ -45,15 +45,13 @@ public class PxSnipeCheckWorker : BackgroundService {
                 _failed = true;
             } else if (DateTime.UtcNow - lastTickTimestamp > LastValidTickMaxGap) {
                 // No valid tick within certain time
-                var secsAgo = (DateTime.UtcNow - lastTickTimestamp.Value).TotalSeconds;
-
                 _logger.LogWarning(
                     "Item on snipe ({Item}) failed valid tick check (Last tick at {LastValidTickUpdate})",
                     sniping.Item,
                     lastTickTimestamp
                 );
                 await channel.SendMessageAsync(
-                    $"No sniping price update of **{sniping.Item}** since **{secsAgo:0} secs ago**!",
+                    $"No sniping price update of **{sniping.Item}**!",
                     embed: DiscordMessageMaker.MakeCurrentSnipingNoUpdate(sniping, lastTickTimestamp)
                 );
                 _failed = true;

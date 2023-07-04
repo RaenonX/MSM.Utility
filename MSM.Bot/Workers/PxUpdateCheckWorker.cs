@@ -1,5 +1,7 @@
 ﻿using Discord.WebSocket;
+using MSM.Bot.Enums;
 using MSM.Bot.Extensions;
+using MSM.Bot.Utils;
 using MSM.Common.Controllers;
 
 namespace MSM.Bot.Workers;
@@ -31,22 +33,23 @@ public class PxUpdateCheckWorker : BackgroundService {
             if (lastTickTimestamp is null) {
                 // No valid tick
                 _logger.LogWarning("Last valid tick check failed (No valid tick)");
-                await channel.SendMessageAsync("No last valid tick update found!");
+                await channel.SendMessageAsync(
+                    "No last valid tick update found!",
+                    embed: DiscordMessageMaker.MakeLastValidTick(lastTickTimestamp, Colors.Danger)
+                );
                 _failed = true;
                 continue;
             }
 
             if (DateTime.UtcNow - lastTickTimestamp > LastValidTickMaxGap) {
                 // No valid tick within certain time
-                var secsAgo = (DateTime.UtcNow - lastTickTimestamp.Value).TotalSeconds;
-
                 _logger.LogWarning(
                     "Last valid tick check failed (Last tick at {LastValidTickUpdate})",
                     lastTickTimestamp
                 );
                 await channel.SendMessageAsync(
-                    $"No price update since **{secsAgo:0} secs ago**!\n" +
-                    $"> Last valid tick updated at {lastTickTimestamp} (UTC)"
+                    "Not receiving price updates!",
+                    embed: DiscordMessageMaker.MakeLastValidTick(lastTickTimestamp, Colors.Danger)
                 );
                 _failed = true;
                 continue;
@@ -55,8 +58,8 @@ public class PxUpdateCheckWorker : BackgroundService {
             // Found valid tick
             if (_failed) {
                 await channel.SendMessageAsync(
-                    $"Prices start ticking again!\n" +
-                    $"> Received price update at **{lastTickTimestamp}** (UTC)"
+                    "Price starts ticking again!",
+                    embed: DiscordMessageMaker.MakeLastValidTick(lastTickTimestamp, Colors.Success)
                 );
             }
 

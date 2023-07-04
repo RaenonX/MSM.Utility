@@ -2,6 +2,7 @@
 using Discord.Interactions;
 using JetBrains.Annotations;
 using MSM.Bot.Attributes;
+using MSM.Bot.Enums;
 using MSM.Bot.Extensions;
 using MSM.Bot.Handlers.AutoComplete;
 using MSM.Bot.Utils;
@@ -74,7 +75,7 @@ public class PxSnipingSlashModule : InteractionModuleBase<SocketInteractionConte
 
         await RespondAsync(
             $"Stopped snipping **{sniping.Item}**!",
-            embed: await DiscordMessageMaker.MakeCurrentSnipingInfo(sniping, new Color(169, 169, 169))
+            embed: await DiscordMessageMaker.MakeCurrentSnipingInfo(sniping, Colors.Stopped)
         );
     }
 
@@ -91,7 +92,7 @@ public class PxSnipingSlashModule : InteractionModuleBase<SocketInteractionConte
 
         await RespondAsync(
             $"Sniping **{sniping.Item}** now!",
-            embed: await DiscordMessageMaker.MakeCurrentSnipingInfo(sniping, new Color(0, 150, 255))
+            embed: await DiscordMessageMaker.MakeCurrentSnipingInfo(sniping, Colors.Info)
         );
     }
 }

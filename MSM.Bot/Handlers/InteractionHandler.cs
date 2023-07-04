@@ -46,7 +46,11 @@ public class InteractionHandler {
             return Task.CompletedTask;
         }
 
-        return context.Interaction.RespondAsync($"{result.Error}: {result.ErrorReason}", ephemeral: true);
+        return context.Interaction.RespondAsync(
+            "Bot error occurred!",
+            embed: DiscordMessageMaker.MakeError(result),
+            ephemeral: true
+        );
     }
 
     private async Task OnInteractionCreated(SocketInteraction interaction) {
