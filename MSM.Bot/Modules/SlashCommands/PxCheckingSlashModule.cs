@@ -6,8 +6,11 @@ using MSM.Common.Controllers;
 
 namespace MSM.Bot.Modules.SlashCommands; 
 
+[Group("px-check", "Commands for checking various price of items.")]
 public class PxCheckingSlashModule : InteractionModuleBase<SocketInteractionContext> {
-    private async Task ShowTradeStationPxCheckAsync() {
+    [SlashCommand("show", "Calls out the UI for Trade Station price check.")]
+    [UsedImplicitly]
+    public async Task CheckPxAsync() {
         var availableItems = (await PxTickController.GetAvailableItemsAsync())
             .ToList();
 
@@ -29,15 +32,7 @@ public class PxCheckingSlashModule : InteractionModuleBase<SocketInteractionCont
         await RespondAsync("Item(s) to price check:", components: builder.Build(), ephemeral: true);
     }
 
-    [SlashCommand("price", "Calls out the UI for Trade Station price check.")]
-    [UsedImplicitly]
-    public Task CheckTradeStationPriceAsync() => ShowTradeStationPxCheckAsync();
-
-    [SlashCommand("px-chart", "Get the link of the website that shows the pricing chart.")]
+    [SlashCommand("chart", "Get the link of the website that shows the pricing chart.")]
     [UsedImplicitly]
     public Task ShowPxChartLinkAsync() => RespondAsync("https://msm.raenonx.cc", ephemeral: true);
-
-    [SlashCommand("px", "Calls out the UI for Trade Station price check.")]
-    [UsedImplicitly]
-    public Task CheckTradeStationPxAsync() => ShowTradeStationPxCheckAsync();
 }

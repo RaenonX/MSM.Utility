@@ -4,8 +4,9 @@ using JetBrains.Annotations;
 
 namespace MSM.Bot.Modules.SlashCommands;
 
+[Group("calc", "Commands for calculating things.")]
 public class CalcSlashModule : InteractionModuleBase<SocketInteractionContext> {
-    [SlashCommand("dpm-calc", "Calculates DPM given boss HP and time left on clear.")]
+    [SlashCommand("dpm", "Calculates DPM given boss HP and time left on clear.")]
     [UsedImplicitly]
     public Task DpmCalcAsync(
         [Summary(description: "Boss HP in B.")] double bossHp,
@@ -17,7 +18,7 @@ public class CalcSlashModule : InteractionModuleBase<SocketInteractionContext> {
                   $"> Boss HP: {bossHp:F3} B - {minsLeft}:{secsLeft:D2} left"
         );
 
-    [SlashCommand("dmg-calc", "Calculates damage based on character stats.")]
+    [SlashCommand("dmg", "Calculates damage based on character stats.")]
     [UsedImplicitly]
     public Task DamageCalcAsync() =>
         RespondAsync(
@@ -25,7 +26,7 @@ public class CalcSlashModule : InteractionModuleBase<SocketInteractionContext> {
             ephemeral: true
         );
 
-    [SlashCommand("math-calc", "Calculates math expression using Eval.NET.")]
+    [SlashCommand("math", "Calculates math expression using Eval.NET.")]
     [UsedImplicitly]
     public Task MathCalcAsync([Summary(description: "Math expression to evaluate.")] string expression) =>
         RespondAsync(

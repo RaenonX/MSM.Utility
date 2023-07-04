@@ -1,77 +1,14 @@
 ﻿using Discord.Interactions;
 using JetBrains.Annotations;
 using MSM.Bot.Attributes;
-using MSM.Bot.Extensions;
 using MSM.Bot.Handlers.AutoComplete;
 using MSM.Common.Controllers;
 
 namespace MSM.Bot.Modules.SlashCommands;
 
+[Group("px-track", "Commands for tracking prices.")]
 public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionContext> {
-    [SlashCommand(
-        "px-set-alert",
-        "Sets a price alert for item on Trade Station. Updates the alert on the item if already exists."
-    )]
-    [RequiresRoleByConfigKey("PxAlert")]
-    [UsedImplicitly]
-    public async Task SetPxAlertAsync(
-        [Summary(description: "Target item to trigger the alert.")]
-        [Autocomplete(typeof(PxAlertableItemsAutoCompleteHandler))]
-        string item,
-        [Summary(description: "Price alert threshold. If the current price falls below this, sends an alert.")]
-        decimal maxPx
-    ) {
-        var startedTracking = await PxTrackingItemController.SetTrackingItemAsync(item);
-
-        await PxAlertController.SetAlert(item, maxPx);
-
-        var messageLines = new List<string> { $"Price alert of **{item}** @ {maxPx.ToMesoText()} set!" };
-        if (startedTracking) {
-            messageLines.Add($"> **{item}** was not being tracked, started tracking now.");
-        }
-
-        await RespondAsync(string.Join('\n', messageLines));
-    }
-
-    [SlashCommand("px-delete-alert", "Deletes a Trade Station price alert.")]
-    [RequiresRoleByConfigKey("PxAlert")]
-    [UsedImplicitly]
-    public async Task DeletePxAlertAsync(
-        [Summary(description: "Target item to delete the alert.")]
-        [Autocomplete(typeof(PxAlertingItemsAutoCompleteHandler))]
-        string item
-    ) {
-        var result = await PxAlertController.DeleteAlert(item);
-
-        if (result.DeletedCount > 0) {
-            await RespondAsync($"Price alert of **{item}** deleted.");
-            return;
-        }
-
-        await RespondAsync($"Price alert of **{item}** not found.");
-    }
-
-    [SlashCommand("px-list-alert", "List all price alerts.")]
-    [RequiresRoleByConfigKey("PxAlert")]
-    [UsedImplicitly]
-    public async Task ListPxAlertAsync() {
-        var alerts = await PxAlertController.GetAllAlerts();
-
-        if (alerts.Count == 0) {
-            await RespondAsync("No active price alerts.");
-            return;
-        }
-
-        await RespondAsync(
-            $"**{alerts.Count}** price alerts in effect:\n" +
-            string.Join(
-                '\n',
-                alerts.Select(x => $"- {x.Item} @ {x.MaxPx.ToMesoText()}")
-            )
-        );
-    }
-
-    [SlashCommand("px-start-tracking", "Start tracking an item's price.")]
+    [SlashCommand("start", "Start tracking an item's price.")]
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task StartTrackingItemAsync([Summary(description: "Item name to track the price.")] string item) {
@@ -85,11 +22,11 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
         await RespondAsync($"Started tracking **{item}**!");
     }
 
-    [SlashCommand("px-stop-tracking", "Stop tracking an item's price.")]
+    [SlashCommand("stop", "Stop tracking an item's price.")]
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public async Task StopTrackingItemAsync(
-        [Summary(description: "Item name to stop tracking its price.")] 
+        [Summary(description: "Item name to stop tracking its price.")]
         [Autocomplete(typeof(PxTrackingItemsAutoCompleteHandler))]
         string item
     ) {
@@ -102,11 +39,8 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
 
         await RespondAsync($"**{item}** is not in the tracking list.");
     }
-
-    [SlashCommand("px-list-tracking", "List currently tracking items.")]
-    [RequiresRoleByConfigKey("PxAlert")]
-    [UsedImplicitly]
-    public async Task ListTrackingItemsAsync() {
+    
+    private async Task ListTrackingItemsCommonAsync() {
         var items = (await PxTrackingItemController
                 .GetTrackingItemsAsync())
             .Select(x => $"- {x.Item}")
@@ -118,4 +52,14 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
 
         await RespondAsync($"Currently tracking {items.Count} items:\n{string.Join('\n', items)}");
     }
+
+    [SlashCommand("show", "List currently tracking items.")]
+    [RequiresRoleByConfigKey("PxAlert")]
+    [UsedImplicitly]
+    public Task ShowTrackingItemsAsync() => ListTrackingItemsCommonAsync();
+
+    [SlashCommand("list", "List currently tracking items.")]
+    [RequiresRoleByConfigKey("PxAlert")]
+    [UsedImplicitly]
+    public Task ListTrackingItemsAsync() => ListTrackingItemsCommonAsync();
 }

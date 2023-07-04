@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 
 namespace MSM.Bot.Modules.SlashCommands;
 
+[Group("bot", "Commands for bot management or bot utilities.")]
 public class BotSlashModule : InteractionModuleBase<SocketInteractionContext> {
     [SlashCommand("ping", "Pings the bot and returns its latency.")]
     [UsedImplicitly]

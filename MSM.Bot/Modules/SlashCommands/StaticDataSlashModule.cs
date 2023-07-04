@@ -4,6 +4,7 @@ using MSM.Bot.Enums;
 
 namespace MSM.Bot.Modules.SlashCommands;
 
+[Group("static", "Commands for checking static data.")]
 public class StaticDataSlashModule : InteractionModuleBase<SocketInteractionContext> {
     [SlashCommand("class", "Returns MSM class data spreadsheet by songj0306.")]
     [UsedImplicitly]
