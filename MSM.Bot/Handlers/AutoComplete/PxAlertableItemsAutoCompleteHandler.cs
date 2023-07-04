@@ -14,7 +14,7 @@ public class PxAlertableItemsAutoCompleteHandler : AutocompleteHandler {
     ) {
         return AutoCompleteHelper.FromStringList(
             interaction,
-            (await PxTrackingItemController.GetTrackingItemsAsync()).Select(x => x.Item)
+            await PxTickController.GetAvailableItemsAsync()
         );
     }
 }

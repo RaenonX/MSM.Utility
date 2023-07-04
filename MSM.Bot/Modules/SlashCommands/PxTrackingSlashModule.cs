@@ -11,7 +11,11 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
     [SlashCommand("start", "Start tracking an item's price.")]
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
-    public async Task StartTrackingItemAsync([Summary(description: "Item name to track the price.")] string item) {
+    public async Task StartTrackingItemAsync(
+        [Summary(description: "Item name to track the price.")]
+        [Autocomplete(typeof(PxAlertableItemsAutoCompleteHandler))]
+        string item
+    ) {
         var startedTracking = await PxTrackingItemController.SetTrackingItemAsync(item);
 
         if (!startedTracking) {
@@ -39,7 +43,7 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
 
         await RespondAsync($"**{item}** is not in the tracking list.");
     }
-    
+
     private async Task ListTrackingItemsCommonAsync() {
         var items = (await PxTrackingItemController
                 .GetTrackingItemsAsync())
