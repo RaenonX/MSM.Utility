@@ -29,7 +29,7 @@ public static class DiscordMessageMaker {
                 .WithColor(255, 15, 15) // Red
                 .WithTitle("Make sure you understand this before start sniping!")
                 .WithDescription(string.Join('\n',
-                    $"- Price alert will send if price drops below {px.ToMesoText()} - +10% of the given number",
+                    $"- Price alert will send if price drops below {px.ToMesoText()} i.e. +10% of the given number",
                     "- Sniping agent needs to start too",
                     $"- Sniping session lasts **{PxSnipingItemController.SnipingSessionTimeout.TotalMinutes} minutes**",
                     "- Rerun this command with the current sniping item to extend the sniping session",

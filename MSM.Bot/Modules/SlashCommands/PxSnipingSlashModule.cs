@@ -11,7 +11,7 @@ namespace MSM.Bot.Modules.SlashCommands;
 
 [Group("px-snipe", "Commands for sniping items by utilizing the sniping mode.")]
 public class PxSnipingSlashModule : InteractionModuleBase<SocketInteractionContext> {
-    private const decimal SnipingPriceOffsetPct = 10;
+    private const decimal SnipingPriceOffsetPct = 5;
 
     [SlashCommand("start", "Start sniping an item.")]
     [RequiresRoleByConfigKey("PxSnipe")]
@@ -20,7 +20,7 @@ public class PxSnipingSlashModule : InteractionModuleBase<SocketInteractionConte
         [Summary(description: "Item name to snipe.")] [Autocomplete(typeof(PxTrackingItemsAutoCompleteHandler))]
         string item,
         [Summary(
-            description: "Sniping price threshold. A +15% offset will be applied to mitigate price randomness on TS."
+            description: "Sniping price threshold. An offset will be applied to mitigate price randomness on TS."
         )]
         decimal px
     ) {
