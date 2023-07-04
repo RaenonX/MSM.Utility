@@ -38,4 +38,16 @@ public static class MongoExtensions {
         // By default, `decimal` are stored in `string`, which is undesired
         BsonSerializer.RegisterSerializer(new DecimalSerializer(BsonType.Decimal128));
     }
+
+    public static async Task<T?> SingleOrNullAsync<TDocument, T>(this IFindFluent<TDocument, T> findFluent) {
+        try {
+            return await findFluent.SingleAsync();
+        } catch (InvalidOperationException e) {
+            if (e.Message == "Sequence contains no elements") {
+                return default;
+            }
+
+            throw;
+        }
+    }
 }

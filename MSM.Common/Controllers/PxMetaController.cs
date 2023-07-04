@@ -14,6 +14,12 @@ public static class PxMetaController {
         return lastTickUpdate?.LastUpdate;
     }
 
+    public static async Task<PxMetaModel?> GetItemMetaAsync(string item) {
+        return await MongoConst.PxMetaCollection
+            .Find(x => x.Item == item)
+            .SortByDescending(x => x.LastUpdate)
+            .FirstAsync();
+    }
 
     public static Task<DateTime?> GetLastValidTickUpdate() {
         return GetLastValidTickUpdate(_ => true);

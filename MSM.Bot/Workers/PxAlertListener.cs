@@ -1,6 +1,8 @@
-﻿using Discord.WebSocket;
+﻿using Discord;
+using Discord.WebSocket;
 using MongoDB.Driver;
 using MSM.Bot.Extensions;
+using MSM.Bot.Utils;
 using MSM.Common.Controllers;
 using MSM.Common.Models;
 
@@ -16,8 +18,54 @@ public class PxAlertListener : BackgroundService {
         _logger = logger;
     }
 
+    private async Task CheckRegularPxAlert(IMessageChannel channel, PxMetaModel updatedMeta) {
+        var alert = await PxAlertController.GetAlert(updatedMeta.Item, updatedMeta.Px);
+
+        // If alert not found, interval not passed, or already alerted at the same price,
+        // don't send message notification
+        if (alert is null || alert.AlertedAt == updatedMeta.Px) {
+            return;
+        }
+        
+        _logger.LogInformation(
+            "Triggered general Px alert on {Item} for {Px} (< {PxAlert})",
+            updatedMeta.Item,
+            updatedMeta.Px,
+            alert.MaxPx
+        );
+
+        await channel.SendMessageAsync(
+            $"Price of **{updatedMeta.Item}** at {updatedMeta.Px.ToMesoText()} now!\n" +
+            $"> Alert Threshold: {alert.MaxPx.ToMesoText()}\n" +
+            $"> Last Updated: {updatedMeta.LastUpdate} (UTC)"
+        );
+    }
+
+    private async Task CheckSnipingPxAlert(IMessageChannel channel, PxMetaModel updatedMeta) {
+        var sniping = await PxSnipingItemController.GetSnipingItemAsync();
+
+        if (sniping is null || updatedMeta.Px > sniping.Px) {
+            // Not sniping / Price not under threshold
+            return;
+        }
+
+        _logger.LogInformation(
+            "Triggered sniping Px alert on {Item} for {Px} (< {PxAlert})",
+            updatedMeta.Item,
+            updatedMeta.Px,
+            sniping.Px
+        );
+
+        await channel.SendMessageAsync(
+            $"**{updatedMeta.Item}** ready to snipe!",
+            embed: DiscordMessageMaker.MakeCurrentSnipingInfo(sniping, updatedMeta)
+        );
+    }
+
     protected override async Task ExecuteAsync(CancellationToken cancellationToken) {
-        var channel = await _client.GetPxAlertChannelAsync();
+        var pxAlertChannel = await _client.GetPxAlertChannelAsync();
+        var snipingAlertChannel = await _client.GetSnipingAlertChannelAsync();
+
         var options = new ChangeStreamOptions { FullDocument = ChangeStreamFullDocumentOption.UpdateLookup };
         var pipeline = new EmptyPipelineDefinition<ChangeStreamDocument<PxMetaModel>>()
             .Match(x =>
@@ -31,25 +79,16 @@ public class PxAlertListener : BackgroundService {
 
         await cursor.ForEachAsync(async change => {
             var updatedMeta = change.FullDocument;
-            var alert = await PxAlertController.GetAlert(updatedMeta.Item, updatedMeta.Px);
-
+            
             _logger.LogInformation(
-                "Received Px meta change on {Item} for {Px} ({WillAlert})",
+                "Received Px meta change on {Item} for {Px}",
                 updatedMeta.Item,
-                updatedMeta.Px,
-                alert is null ? "Non-alert" : "Alert"
+                updatedMeta.Px
             );
 
-            // If alert not found, interval not passed, or already alerted at the same price,
-            // don't send message notification
-            if (alert is null || alert.AlertedAt == updatedMeta.Px) {
-                return;
-            }
-
-            await channel.SendMessageAsync(
-                $"Price of **{updatedMeta.Item}** at {updatedMeta.Px.ToMesoText()} now!\n" +
-                $"> Alert Threshold: {alert.MaxPx.ToMesoText()}\n" +
-                $"> Last Updated: {updatedMeta.LastUpdate} (UTC)"
+            await Task.WhenAll(
+                CheckRegularPxAlert(pxAlertChannel, updatedMeta),
+                CheckSnipingPxAlert(snipingAlertChannel, updatedMeta)
             );
         }, cancellationToken);
     }

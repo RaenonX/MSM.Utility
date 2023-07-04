@@ -11,6 +11,10 @@ public class PxUpdateCheckWorker : BackgroundService {
 
     private bool _failed;
 
+    private static readonly TimeSpan LastValidTickMaxGap = TimeSpan.FromSeconds(45);
+
+    private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(30);
+
     public PxUpdateCheckWorker(DiscordSocketClient client, ILogger<PxUpdateCheckWorker> logger) {
         _client = client;
         _logger = logger;
@@ -20,43 +24,47 @@ public class PxUpdateCheckWorker : BackgroundService {
         var channel = await _client.GetSystemAlertChannelAsync();
 
         while (!cancellationToken.IsCancellationRequested) {
-            var lastValidTickUpdate = await PxMetaController.GetLastValidTickUpdate();
+            await Task.Delay(CheckInterval, cancellationToken);
 
-            if (lastValidTickUpdate is null) {
+            var lastTickTimestamp = await PxMetaController.GetLastValidTickUpdate();
+
+            if (lastTickTimestamp is null) {
                 // No valid tick
                 _logger.LogWarning("Last valid tick check failed (No valid tick)");
                 await channel.SendMessageAsync("No last valid tick update found!");
                 _failed = true;
-            } else if (DateTime.UtcNow - lastValidTickUpdate > TimeSpan.FromSeconds(45)) {
+                continue;
+            }
+
+            if (DateTime.UtcNow - lastTickTimestamp > LastValidTickMaxGap) {
                 // No valid tick within certain time
-                var secsAgo = (DateTime.UtcNow - lastValidTickUpdate.Value).TotalSeconds;
+                var secsAgo = (DateTime.UtcNow - lastTickTimestamp.Value).TotalSeconds;
 
                 _logger.LogWarning(
                     "Last valid tick check failed (Last tick at {LastValidTickUpdate})",
-                    lastValidTickUpdate
+                    lastTickTimestamp
                 );
                 await channel.SendMessageAsync(
                     $"No price update since **{secsAgo:0} secs ago**!\n" +
-                    $"> Last valid tick updated at {lastValidTickUpdate} (UTC)"
+                    $"> Last valid tick updated at {lastTickTimestamp} (UTC)"
                 );
                 _failed = true;
-            } else {
-                // Found valid tick
-                if (_failed) {
-                    await channel.SendMessageAsync(
-                        $"Prices start ticking again!\n" +
-                        $"> Received price update at **{lastValidTickUpdate}** (UTC)"
-                    );
-                }
-
-                _logger.LogInformation(
-                    "Last valid tick check succeed (Last tick at {LastValidTickUpdate})",
-                    lastValidTickUpdate
-                );
-                _failed = false;
+                continue;
             }
 
-            await Task.Delay(30000, cancellationToken);
+            // Found valid tick
+            if (_failed) {
+                await channel.SendMessageAsync(
+                    $"Prices start ticking again!\n" +
+                    $"> Received price update at **{lastTickTimestamp}** (UTC)"
+                );
+            }
+
+            _logger.LogInformation(
+                "Last valid tick check succeed (Last tick at {LastValidTickUpdate})",
+                lastTickTimestamp
+            );
+            _failed = false;
         }
     }
 }

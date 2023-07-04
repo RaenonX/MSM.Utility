@@ -5,6 +5,7 @@ using Discord.WebSocket;
 using MSM.Bot.Enums;
 using MSM.Bot.Extensions;
 using MSM.Bot.Utils;
+using MSM.Common.Controllers;
 
 namespace MSM.Bot.Handlers;
 
@@ -31,7 +32,7 @@ public class InteractionHandler {
         _client.ModalSubmitted += OnModalSubmitted;
         _client.SelectMenuExecuted += OnSelectMenuExecuted;
         _client.ButtonExecuted += OnButtonExecuted;
-        
+
         _handler.SlashCommandExecuted += OnSlashCommandExecuted;
     }
 
@@ -44,7 +45,7 @@ public class InteractionHandler {
             // Ignoring unknown command since it's possible to happen for follow up modal interactions
             return Task.CompletedTask;
         }
-        
+
         return context.Interaction.RespondAsync($"{result.Error}: {result.ErrorReason}", ephemeral: true);
     }
 
@@ -123,7 +124,7 @@ public class InteractionHandler {
         switch (selectMenuId) {
             case SelectMenuId.TradeStationPxCheck:
                 await component.RespondAsync(
-                    await DiscordMessageGenerator.MakePxReport(values),
+                    await DiscordMessageMaker.MakePxReport(values),
                     components: values.ToPxRefreshButtons(),
                     ephemeral: true
                 );
@@ -144,9 +145,21 @@ public class InteractionHandler {
         switch (action) {
             case ButtonId.RefreshPx:
                 await component.RespondAsync(
-                    await DiscordMessageGenerator.MakePxReport(new[] { actionParameter }),
+                    await DiscordMessageMaker.MakePxReport(new[] { actionParameter }),
                     components: new[] { actionParameter }.ToPxRefreshButtons(),
                     ephemeral: true
+                );
+                break;
+            case ButtonId.ConfirmStartSniping:
+                var snipingArgs = actionParameter.Split("@", 2);
+                var item = snipingArgs[0];
+                var px = Convert.ToDecimal(snipingArgs[1]);
+
+                var sniping = await PxSnipingItemController.SetSnipingItemAsync(item, px);
+
+                await component.RespondAsync(
+                    $"Started sniping **{item}**!",
+                    embed: await DiscordMessageMaker.MakeCurrentSnipingInfo(sniping)
                 );
                 break;
             case null:

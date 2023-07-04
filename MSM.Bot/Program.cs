@@ -20,7 +20,8 @@ var host = Host.CreateDefaultBuilder(args)
             .AddSingleton<InteractionHandler>()
             .AddHostedService<DiscordClientWorker>()
             .AddHostedService<PxAlertListener>()
-            .AddHostedService<PxUpdateCheckWorker>();
+            .AddHostedService<PxUpdateCheckWorker>()
+            .AddHostedService<PxSnipeCheckWorker>();
     })
     .Build()
     .InitLogging();

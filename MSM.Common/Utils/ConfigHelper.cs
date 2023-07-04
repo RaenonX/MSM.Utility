@@ -39,6 +39,10 @@ public static class ConfigHelper {
         return GetDiscordChannelSection().GetRequiredValue<ulong>("PxAlert");
     }
 
+    public static ulong GetDiscordSnipingAlertChannelId() {
+        return GetDiscordChannelSection().GetRequiredValue<ulong>("PxSnipe");
+    }
+
     public static ulong GetDiscordSystemAlertChannelId() {
         return GetDiscordChannelSection().GetRequiredValue<ulong>("SystemAlert");
     }

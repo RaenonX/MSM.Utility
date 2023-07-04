@@ -26,6 +26,9 @@ public static class MongoConst {
     public static readonly IMongoCollection<PxTrackingItemModel> PxTrackingItemCollection =
         PxMetaDatabase.GetCollection<PxTrackingItemModel>("tracking");
 
+    public static readonly IMongoCollection<PxSnipingItemModel> PxSnipingItemCollection =
+        PxMetaDatabase.GetCollection<PxSnipingItemModel>("sniping");
+
     public static readonly IMongoCollection<PxAlertModel> PxAlertCollection =
         AlertDatabase.GetCollection<PxAlertModel>("px");
 

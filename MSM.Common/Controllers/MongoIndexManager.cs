@@ -9,6 +9,7 @@ public static class MongoIndexManager {
             PxDataIndex(),
             PxAlertIndex(),
             PxTrackingItemIndex(),
+            PxSnipingItemIndex(),
             PxMetaIndex()
         };
     }
@@ -49,7 +50,18 @@ public static class MongoIndexManager {
 
         await MongoConst.PxTrackingItemCollection.Indexes.CreateOneAsync(indexModel);
     }
-    
+
+    private static async Task PxSnipingItemIndex() {
+        var indexOptions = new CreateIndexOptions {
+            Name = "SnipingItem",
+            ExpireAfter = TimeSpan.Zero
+        };
+        var indexKeys = Builders<PxSnipingItemModel>.IndexKeys.Ascending(data => data.EndingTimestamp);
+        var indexModel = new CreateIndexModel<PxSnipingItemModel>(indexKeys, indexOptions);
+
+        await MongoConst.PxSnipingItemCollection.Indexes.CreateOneAsync(indexModel);
+    }
+
     private static async Task PxMetaIndex() {
         var indexOptions = new CreateIndexOptions {
             Name = "MetaItem",

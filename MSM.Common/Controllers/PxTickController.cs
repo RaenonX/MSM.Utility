@@ -18,7 +18,7 @@ public static class PxTickController {
 
     private const int PxVerificationRequiredCount = 3;
 
-    private const int PxVerificationTimeoutSec = 45;
+    private static readonly TimeSpan PxVerificationTimeout = TimeSpan.FromSeconds(45);
 
     private static Task RecordPx(
         IMongoCollection<PxDataModel> collection,
@@ -59,7 +59,7 @@ public static class PxTickController {
         queue.TryPeek(out var queueTop);
         while (
             queueTop is not null &&
-            DateTime.UtcNow - queueTop.Timestamp > TimeSpan.FromSeconds(PxVerificationTimeoutSec)
+            DateTime.UtcNow - queueTop.Timestamp > PxVerificationTimeout
         ) {
             queue.TryDequeue(out var dequeued);
 
@@ -153,7 +153,7 @@ public static class PxTickController {
             .Find(_ => true)
             .SortByDescending(x => x.Timestamp)
             .Limit(1)
-            .SingleAsync();
+            .SingleOrNullAsync();
 
         return new KeyValuePair<string, PxDataModel?>(item, pxData);
     }

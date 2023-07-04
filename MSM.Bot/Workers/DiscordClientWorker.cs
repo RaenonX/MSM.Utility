@@ -19,6 +19,7 @@ public class DiscordClientWorker : BackgroundService {
     private async Task SendTestMessage() {
         var messages = await Task.WhenAll(
             (await _client.GetPxAlertChannelAsync()).SendMessageAsync("`SYSTEM` Price alert sending test"),
+            (await _client.GetSnipingAlertChannelAsync()).SendMessageAsync("`SYSTEM` Sniping alert sending test"),
             (await _client.GetSystemAlertChannelAsync()).SendMessageAsync("`SYSTEM` System alert sending test")
         );
 

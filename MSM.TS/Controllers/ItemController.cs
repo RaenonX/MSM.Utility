@@ -30,4 +30,13 @@ public class ItemController : ControllerBase {
 
         return Content(string.Join(',', (await PxTrackingItemController.GetTrackingItemsAsync()).Select(x => x.Item)));
     }
+
+    [HttpGet]
+    [Route("sniping")]
+    public async Task<ActionResult> GetSnipingItem() {
+        _logger.LogInformation("Getting sniping items");
+        var snipingItem = await PxSnipingItemController.GetSnipingItemAsync();
+
+        return Content(snipingItem?.Item ?? "");
+    }
 }

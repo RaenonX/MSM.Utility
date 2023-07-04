@@ -20,10 +20,18 @@ public static class DiscordExtensions {
         return builder.Build();
     }
 
+    public static MessageComponent ToConfirmStartSnipingButton(this string item, decimal px) {
+        return new ComponentBuilder()
+            .WithButton(
+                "Confirm Start Sniping",
+                $"{ButtonId.ConfirmStartSniping.ToString()}/{item}@{px}",
+                ButtonStyle.Danger
+            )
+            .Build();
+    }
+
     public static string ToMesoText(this decimal meso) {
-        return meso < 1E6m ? 
-            $"**{meso:#,###}**" : 
-            $"**{meso.ToAbbreviation(decimals: 2)}** ({meso:#,###})";
+        return meso < 1E6m ? $"**{meso:#,###}**" : $"**{meso.ToAbbreviation(decimals: 2)}** ({meso:#,###})";
     }
 
     private static async Task<IMessageChannel> GetMessageChannel(this IDiscordClient client, ulong channelId) {
@@ -40,5 +48,9 @@ public static class DiscordExtensions {
 
     public static Task<IMessageChannel> GetSystemAlertChannelAsync(this IDiscordClient client) {
         return client.GetMessageChannel(ConfigHelper.GetDiscordSystemAlertChannelId());
+    }
+
+    public static Task<IMessageChannel> GetSnipingAlertChannelAsync(this IDiscordClient client) {
+        return client.GetMessageChannel(ConfigHelper.GetDiscordSnipingAlertChannelId());
     }
 }
