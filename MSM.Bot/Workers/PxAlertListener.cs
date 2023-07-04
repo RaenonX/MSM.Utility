@@ -44,8 +44,8 @@ public class PxAlertListener : BackgroundService {
     private async Task CheckSnipingPxAlert(IMessageChannel channel, PxMetaModel updatedMeta) {
         var sniping = await PxSnipingItemController.GetSnipingItemAsync();
 
-        if (sniping is null || updatedMeta.Px > sniping.Px) {
-            // Not sniping / Price not under threshold
+        if (sniping is null || updatedMeta.Item != sniping.Item || updatedMeta.Px > sniping.Px) {
+            // Not sniping / Updated meta not on snipe / Price not under threshold
             return;
         }
 
@@ -57,7 +57,7 @@ public class PxAlertListener : BackgroundService {
         );
 
         await channel.SendMessageAsync(
-            $"**{updatedMeta.Item}** ready to snipe!",
+            $"**{sniping.Item}** ready to snipe!",
             embed: DiscordMessageMaker.MakeCurrentSnipingInfo(sniping, updatedMeta)
         );
     }
