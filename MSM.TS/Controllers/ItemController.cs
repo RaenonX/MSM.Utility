@@ -19,7 +19,7 @@ public class ItemController : ControllerBase {
         _logger.LogInformation("Getting available items");
 
         return new JsonResult(new AvailableItemsResponse {
-            Items = (await PxTickController.GetAvailableItemsAsync())
+            Items = await PxTickController.GetAvailableItemsAsync()
         });
     }
 
@@ -32,11 +32,21 @@ public class ItemController : ControllerBase {
     }
 
     [HttpGet]
-    [Route("sniping")]
+    [Route("sniping-script")]
     public async Task<ActionResult> GetSnipingItem() {
-        _logger.LogInformation("Getting sniping items");
+        _logger.LogInformation("Getting sniping items (script)");
         var snipingItem = await PxSnipingItemController.GetSnipingItemAsync();
 
         return Content(snipingItem?.Item ?? "");
+    }
+
+    [HttpGet]
+    [Route("sniping-web")]
+    public async Task<ActionResult> GetSnipingItemForWeb() {
+        _logger.LogInformation("Getting sniping items (web)");
+
+        return new JsonResult(new SnipingItemResponse {
+            Item = await PxSnipingItemController.GetSnipingItemAsync()
+        });
     }
 }
