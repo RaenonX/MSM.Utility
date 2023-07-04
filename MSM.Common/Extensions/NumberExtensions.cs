@@ -9,10 +9,10 @@ public static class NumberExtensions {
         var numberForCheck = Math.Abs(number);
 
         return numberForCheck switch {
-            > 1E9m => $"{(number / 1E9m).ToString($"F{decimals}")} B",
-            > 1E6m => $"{(number / 1E6m).ToString($"F{decimals}")} M",
-            > 1E3m => $"{(number / 1E3m).ToString($"F{decimals}")} K",
-            _ => $"{number.ToString($"F{decimals}")}"
+            >= 1E9m => $"{(number / 1E9m).ToString($"F{decimals}")} B",
+            >= 1E6m => $"{(number / 1E6m).ToString($"F{decimals}")} M",
+            >= 1E3m => $"{(number / 1E3m).ToString($"F{decimals}")} K",
+            _ => $"{number:#.###}"
         };
     }
 }
