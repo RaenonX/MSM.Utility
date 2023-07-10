@@ -4,6 +4,8 @@ using Discord.Interactions;
 using Discord.WebSocket;
 using MSM.Bot.Enums;
 using MSM.Bot.Extensions;
+using MSM.Bot.Handlers.Types;
+using MSM.Bot.Models;
 using MSM.Bot.Utils;
 using MSM.Common.Controllers;
 
@@ -26,6 +28,7 @@ public class InteractionHandler {
         _client.Ready += ReadyAsync;
         _handler.Log += OnLogHandler.OnLogAsync;
 
+        _handler.AddTypeConverter<AbbreviatedNumberWrapperModel>(new AbbreviatedNumberTypeConverter());
         await _handler.AddModulesAsync(Assembly.GetEntryAssembly(), _services);
 
         _client.InteractionCreated += OnInteractionCreated;

@@ -3,6 +3,7 @@ using JetBrains.Annotations;
 using MSM.Bot.Attributes;
 using MSM.Bot.Extensions;
 using MSM.Bot.Handlers.AutoComplete;
+using MSM.Bot.Models;
 using MSM.Common.Controllers;
 
 namespace MSM.Bot.Modules.SlashCommands; 
@@ -20,13 +21,13 @@ public class PxAlertingSlashModule : InteractionModuleBase<SocketInteractionCont
         [Autocomplete(typeof(PxAlertableItemsAutoCompleteHandler))]
         string item,
         [Summary(description: "Price alert threshold. If the current price falls below this, sends an alert.")]
-        decimal maxPx
+        AbbreviatedNumberWrapperModel maxPx
     ) {
         var startedTracking = await PxTrackingItemController.SetTrackingItemAsync(item);
 
-        await PxAlertController.SetAlert(item, maxPx);
+        await PxAlertController.SetAlert(item, maxPx.Number);
 
-        var messageLines = new List<string> { $"Price alert of **{item}** @ {maxPx.ToMesoText()} set!" };
+        var messageLines = new List<string> { $"Price alert of **{item}** @ {maxPx.Number.ToMesoText()} set!" };
         if (startedTracking) {
             messageLines.Add($"> **{item}** was not being tracked, started tracking now.");
         }

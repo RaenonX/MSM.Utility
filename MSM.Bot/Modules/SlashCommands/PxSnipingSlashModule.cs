@@ -1,10 +1,10 @@
-﻿using Discord;
-using Discord.Interactions;
+﻿using Discord.Interactions;
 using JetBrains.Annotations;
 using MSM.Bot.Attributes;
 using MSM.Bot.Enums;
 using MSM.Bot.Extensions;
 using MSM.Bot.Handlers.AutoComplete;
+using MSM.Bot.Models;
 using MSM.Bot.Utils;
 using MSM.Common.Controllers;
 
@@ -23,9 +23,9 @@ public class PxSnipingSlashModule : InteractionModuleBase<SocketInteractionConte
         [Summary(
             description: "Sniping price threshold. An offset will be applied to mitigate price randomness on TS."
         )]
-        decimal px
+        AbbreviatedNumberWrapperModel px
     ) {
-        px *= 1 + SnipingPriceOffsetPct / 100;
+        var pxNumber = px.Number * (1 + SnipingPriceOffsetPct / 100);
 
         var sniping = await PxSnipingItemController.GetSnipingItemAsync();
 
@@ -33,7 +33,7 @@ public class PxSnipingSlashModule : InteractionModuleBase<SocketInteractionConte
             // Already sniping something now
             if (sniping.Item == item) {
                 // Sniping the same item
-                var updatedSniping = await PxSnipingItemController.SetSnipingItemAsync(item, px);
+                var updatedSniping = await PxSnipingItemController.SetSnipingItemAsync(item, pxNumber);
 
                 await RespondAsync(
                     $"Updated sniping info of **{item}**!",
@@ -54,11 +54,11 @@ public class PxSnipingSlashModule : InteractionModuleBase<SocketInteractionConte
 
         await RespondAsync(
             string.Join('\n',
-                $"Are you sure to start sniping **{item}** at {px.ToMesoText()}?",
+                $"Are you sure to start sniping **{item}** at {pxNumber.ToMesoText()}?",
                 $"> All types of alerts (price and system) will send to <#{snipingAlertChannel.Id}>"
             ),
-            embeds: DiscordMessageMaker.MakeSnipingStartWarning(px),
-            components: item.ToConfirmStartSnipingButton(px)
+            embeds: DiscordMessageMaker.MakeSnipingStartWarning(pxNumber),
+            components: item.ToConfirmStartSnipingButton(pxNumber)
         );
     }
 
