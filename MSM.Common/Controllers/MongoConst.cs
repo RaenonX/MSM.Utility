@@ -18,6 +18,8 @@ public static class MongoConst {
     // One of the usages for meta database is to use Change Stream to trigger price watch event
     private static readonly IMongoDatabase PxMetaDatabase = Client.GetDatabase("pxMeta");
 
+    private static readonly IMongoDatabase ScriptDatabase = Client.GetDatabase("script");
+
     private static readonly IMongoDatabase AlertDatabase = Client.GetDatabase("alert");
 
     public static readonly IMongoCollection<PxMetaModel> PxMetaCollection =
@@ -28,6 +30,9 @@ public static class MongoConst {
 
     public static readonly IMongoCollection<PxSnipingItemModel> PxSnipingItemCollection =
         PxMetaDatabase.GetCollection<PxSnipingItemModel>("sniping");
+
+    public static readonly IMongoCollection<ScriptLoopTimeModel> ScriptLoopTimeCollection =
+        ScriptDatabase.GetCollection<ScriptLoopTimeModel>("loop");
 
     public static readonly IMongoCollection<PxAlertModel> PxAlertCollection =
         AlertDatabase.GetCollection<PxAlertModel>("px");
