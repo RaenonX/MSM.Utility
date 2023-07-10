@@ -2,7 +2,7 @@
 
 namespace MSM.TS.Responses;
 
-public record ScriptLoopTimeInfoResponse {
+public record ScriptLoopStatsResponse {
     [UsedImplicitly]
     public required decimal AvgItemSec { get; init; }
 };

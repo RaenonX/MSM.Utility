@@ -2,6 +2,7 @@
 using JetBrains.Annotations;
 using MSM.Bot.Attributes;
 using MSM.Bot.Handlers.AutoComplete;
+using MSM.Bot.Utils;
 using MSM.Common.Controllers;
 
 namespace MSM.Bot.Modules.SlashCommands;
@@ -54,7 +55,10 @@ public class PxTrackingSlashModule : InteractionModuleBase<SocketInteractionCont
             await RespondAsync("Currently not tracking any items.");
         }
 
-        await RespondAsync($"Currently tracking {items.Count} items:\n{string.Join('\n', items)}");
+        await RespondAsync(
+            $"Currently tracking {items.Count} items:\n{string.Join('\n', items)}",
+            embed: await DiscordMessageMaker.MakePriceTrackingStats(5)
+        );
     }
 
     [SlashCommand("show", "List currently tracking items.")]

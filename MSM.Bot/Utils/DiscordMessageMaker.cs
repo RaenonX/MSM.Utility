@@ -108,6 +108,17 @@ public static class DiscordMessageMaker {
             .Build();
     }
 
+    public static async Task<Embed> MakePriceTrackingStats(int loopCountBasis) {
+        var avgPerItem = await ScriptLoopTimeController.GetAvgPerItem(loopCountBasis);
+
+        return new EmbedBuilder()
+            .WithColor(Colors.Info)
+            .WithDescription(
+                $"Each item takes **~{avgPerItem:0.000}** secs to check based on the recent {loopCountBasis} loop(s)"
+            )
+            .Build();
+    }
+
     private static EmbedFieldBuilder[] MakeSnipingMeta(PxSnipingItemModel sniping) {
         return new[] {
             new EmbedFieldBuilder {

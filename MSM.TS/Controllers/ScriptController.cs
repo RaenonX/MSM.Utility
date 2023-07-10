@@ -17,7 +17,7 @@ public class ScriptController : ControllerBase {
 
     [HttpPost]
     [Route("loop")]
-    public async Task<ActionResult> RecordLoopTime([FromForm] ScriptLoopRecordPayload payload) {
+    public async Task<ActionResult> RecordLoopStats([FromForm] ScriptLoopRecordPayload payload) {
         if (payload.Token != ConfigHelper.GetApiToken()) {
             return Unauthorized();
         }
@@ -34,16 +34,16 @@ public class ScriptController : ControllerBase {
 
     [HttpGet]
     [Route("loop")]
-    public async Task<JsonResult> GetAverageLoopTime([FromQuery] int loops) {
+    public async Task<JsonResult> GetScriptLoopStats([FromQuery] int loops) {
         var avgPerItem = await ScriptLoopTimeController.GetAvgPerItem(loops);
 
         _logger.LogInformation(
-            "Returning average check time on 1 item in {LoopCount} loops ({AvgPerItem:0.000} secs)",
+            "Returning script loop stats in {LoopCount} loops ({AvgPerItem:0.000} secs / item)",
             loops,
             avgPerItem
         );
 
-        return new JsonResult(new ScriptLoopTimeInfoResponse {
+        return new JsonResult(new ScriptLoopStatsResponse {
             AvgItemSec = avgPerItem
         });
     }
