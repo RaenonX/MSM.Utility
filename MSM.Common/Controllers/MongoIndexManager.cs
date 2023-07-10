@@ -34,7 +34,9 @@ public static class MongoIndexManager {
             Name = "AlertItem",
             Unique = true
         };
-        var indexKeys = Builders<PxAlertModel>.IndexKeys.Ascending(data => data.Item);
+        var indexKeys = Builders<PxAlertModel>.IndexKeys
+            .Ascending(data => data.Item)
+            .Ascending(data => data.UserId);
         var indexModel = new CreateIndexModel<PxAlertModel>(indexKeys, indexOptions);
 
         await MongoConst.PxAlertCollection.Indexes.CreateOneAsync(indexModel);

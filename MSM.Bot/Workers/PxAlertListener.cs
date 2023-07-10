@@ -19,24 +19,26 @@ public class PxAlertListener : BackgroundService {
     }
 
     private async Task CheckRegularPxAlert(IMessageChannel channel, PxMetaModel updatedMeta) {
-        var alert = await PxAlertController.GetAlert(updatedMeta.Item, updatedMeta.Px);
+        var triggeredAlerts = await PxAlertController.GetAlert(updatedMeta.Item, updatedMeta.Px);
 
-        // If alert not found, interval not passed, or already alerted at the same price,
-        // don't send message notification
-        if (alert is null || alert.AlertedAt == updatedMeta.Px) {
+        if (triggeredAlerts.Count == 0) {
             return;
         }
-        
-        _logger.LogInformation(
-            "Triggered general Px alert on {Item} for {Px} (< {PxAlert})",
-            updatedMeta.Item,
-            updatedMeta.Px,
-            alert.MaxPx
-        );
+
+        foreach (var alert in triggeredAlerts) {
+            _logger.LogInformation(
+                "Triggered general Px alert on {Item} at {Px} (< {PxAlert}) for UID {AlertUser}",
+                updatedMeta.Item,
+                updatedMeta.Px,
+                alert.MaxPx,
+                alert.UserId
+            );
+        }
 
         await channel.SendMessageAsync(
-            $"Price of **{updatedMeta.Item}** at {updatedMeta.Px.ToMesoText()} now!",
-            embed: DiscordMessageMaker.MakePriceAlert(updatedMeta, alert)
+            $"Price of **{updatedMeta.Item}** at {updatedMeta.Px.ToMesoText()} now! " +
+            $"{string.Join(' ', triggeredAlerts.Select(x => MentionUtils.MentionUser(x.UserId)))}",
+            embeds: triggeredAlerts.Select(x => DiscordMessageMaker.MakePriceAlert(updatedMeta, x)).ToArray()
         );
     }
 
@@ -78,7 +80,7 @@ public class PxAlertListener : BackgroundService {
 
         await cursor.ForEachAsync(async change => {
             var updatedMeta = change.FullDocument;
-            
+
             _logger.LogInformation(
                 "Received Px meta change on {Item} for {Px}",
                 updatedMeta.Item,

@@ -1,16 +1,21 @@
 ﻿using JetBrains.Annotations;
+using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace MSM.Common.Models;
 
-// To ignore `_id`
-[BsonIgnoreExtraElements]
 public record PxAlertModel {
+    [UsedImplicitly]
+    public ObjectId Id { get; init; }
+    
     [UsedImplicitly]
     public required string Item { get; init; }
     
     [UsedImplicitly]
     public required decimal MaxPx { get; init; }
+    
+    [UsedImplicitly]
+    public required ulong UserId { get; init; }
     
     [UsedImplicitly]
     public required decimal? AlertedAt { get; init; }

@@ -91,6 +91,11 @@ public static class DiscordMessageMaker {
                 },
                 new EmbedFieldBuilder {
                     IsInline = false,
+                    Name = "Alert Target",
+                    Value = MentionUtils.MentionUser(alert.UserId)
+                },
+                new EmbedFieldBuilder {
+                    IsInline = false,
                     Name = "Alert Threshold",
                     Value = alert.MaxPx.ToMesoText()
                 },

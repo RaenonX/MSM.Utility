@@ -12,9 +12,13 @@ public class PxAlertingItemsAutoCompleteHandler : AutocompleteHandler {
         IParameterInfo parameter,
         IServiceProvider services
     ) {
+        var alerts = await PxAlertController.GetAllAlerts();
+
         return AutoCompleteHelper.FromStringList(
             interaction,
-            (await PxAlertController.GetAllAlerts()).Select(x => x.Item)
+            alerts
+                .Select(x => x.Item)
+                .Distinct()
         );
     }
 }

@@ -1,4 +1,5 @@
-﻿using Discord.Interactions;
+﻿using Discord;
+using Discord.Interactions;
 using JetBrains.Annotations;
 using MSM.Bot.Attributes;
 using MSM.Bot.Extensions;
@@ -6,7 +7,7 @@ using MSM.Bot.Handlers.AutoComplete;
 using MSM.Bot.Models;
 using MSM.Common.Controllers;
 
-namespace MSM.Bot.Modules.SlashCommands; 
+namespace MSM.Bot.Modules.SlashCommands;
 
 [Group("px-alert", "Commands for managing price alerts.")]
 public class PxAlertingSlashModule : InteractionModuleBase<SocketInteractionContext> {
@@ -25,9 +26,11 @@ public class PxAlertingSlashModule : InteractionModuleBase<SocketInteractionCont
     ) {
         var startedTracking = await PxTrackingItemController.SetTrackingItemAsync(item);
 
-        await PxAlertController.SetAlert(item, maxPx.Number);
+        await PxAlertController.SetAlert(item, maxPx.Number, Context.User.Id);
 
-        var messageLines = new List<string> { $"Price alert of **{item}** @ {maxPx.Number.ToMesoText()} set!" };
+        var messageLines = new List<string> {
+            $"Price alert of **{item}** @ {maxPx.Number.ToMesoText()} for {Context.User.Mention} set!"
+        };
         if (startedTracking) {
             messageLines.Add($"> **{item}** was not being tracked, started tracking now.");
         }
@@ -43,14 +46,14 @@ public class PxAlertingSlashModule : InteractionModuleBase<SocketInteractionCont
         [Autocomplete(typeof(PxAlertingItemsAutoCompleteHandler))]
         string item
     ) {
-        var result = await PxAlertController.DeleteAlert(item);
+        var result = await PxAlertController.DeleteAlert(item, Context.User.Id);
 
         if (result.DeletedCount > 0) {
-            await RespondAsync($"Price alert of **{item}** deleted.");
+            await RespondAsync($"Price alert of **{item}** for {Context.User.Mention} deleted.");
             return;
         }
 
-        await RespondAsync($"Price alert of **{item}** not found.");
+        await RespondAsync($"Price alert of **{item}** for {Context.User.Mention} not found.");
     }
 
     private async Task ListPxAlertCommonAsync() {
@@ -65,8 +68,10 @@ public class PxAlertingSlashModule : InteractionModuleBase<SocketInteractionCont
             $"**{alerts.Count}** price alerts in effect:\n" +
             string.Join(
                 '\n',
-                alerts.Select(x => $"- {x.Item} @ {x.MaxPx.ToMesoText()}")
-            )
+                alerts.Select(x => $"- {x.Item} @ {x.MaxPx.ToMesoText()} by {MentionUtils.MentionUser(x.UserId)}")
+            ),
+            ephemeral: true,
+            allowedMentions: new AllowedMentions { UserIds = new List<ulong>() }
         );
     }
 
@@ -74,7 +79,7 @@ public class PxAlertingSlashModule : InteractionModuleBase<SocketInteractionCont
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
     public Task ShowPxAlertAsync() => ListPxAlertCommonAsync();
-    
+
     [SlashCommand("list", "List all price alerts.")]
     [RequiresRoleByConfigKey("PxAlert")]
     [UsedImplicitly]
