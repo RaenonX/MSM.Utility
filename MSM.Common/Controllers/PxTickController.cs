@@ -14,7 +14,7 @@ public static class PxTickController {
 
     private static readonly FilterDefinitionBuilder<PxDataModel> FilterBuilder = Builders<PxDataModel>.Filter;
 
-    private const decimal PxVerificationThresholdPct = 5;
+    private const decimal PxVerificationThresholdPct = 2.5m;
 
     private const int PxVerificationRequiredCount = 3;
 
