@@ -15,7 +15,7 @@ public class PxUpdateCheckWorker : BackgroundService {
 
     private static readonly TimeSpan LastValidTickMaxGap = TimeSpan.FromSeconds(45);
 
-    private static readonly TimeSpan CheckInterval = TimeSpan.FromSeconds(30);
+    private static readonly TimeSpan CheckInterval = TimeSpan.FromDays(365);
 
     public PxUpdateCheckWorker(DiscordSocketClient client, ILogger<PxUpdateCheckWorker> logger) {
         _client = client;
