@@ -13,7 +13,7 @@ public class PxUpdateCheckWorker : BackgroundService {
 
     private bool _failed;
 
-    private static readonly TimeSpan LastValidTickMaxGap = TimeSpan.FromSeconds(45);
+    private static readonly TimeSpan LastValidTickMaxGap = TimeSpan.FromDays(365);
 
     private static readonly TimeSpan CheckInterval = TimeSpan.FromDays(365);
 
